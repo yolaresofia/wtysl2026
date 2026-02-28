@@ -13,27 +13,13 @@
  */
 
 // Source: ../sanity.schema.json
-export type PageReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'page'
-}
-
-export type PostReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'post'
-}
-
-export type Link = {
-  _type: 'link'
-  linkType?: 'href' | 'page' | 'post'
-  href?: string
-  page?: PageReference
-  post?: PostReference
-  openInNewTab?: boolean
+export type InfoSection = {
+  title?: string
+  items?: Array<
+    {
+      _key: string
+    } & HeroInfoItem
+  >
 }
 
 export type SanityImageAssetReference = {
@@ -43,12 +29,11 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
 }
 
-export type CallToAction = {
-  _type: 'callToAction'
-  eyebrow?: string
-  heading: string
-  body?: BlockContentTextOnly
-  button?: Button
+export type PhotoInfoGalleryItem = {
+  _type: 'photoInfoGalleryItem'
+  name?: string
+  role?: string
+  location?: string
   image?: {
     asset?: SanityImageAssetReference
     media?: unknown
@@ -56,15 +41,131 @@ export type CallToAction = {
     crop?: SanityImageCrop
     _type: 'image'
   }
-  theme?: 'light' | 'dark'
-  contentAlignment?: 'textFirst' | 'imageFirst'
 }
 
-export type InfoSection = {
-  _type: 'infoSection'
-  heading?: string
-  subheading?: string
-  content?: BlockContent
+export type PhotoInfoGallery = {
+  _type: 'photoInfoGallery'
+  title?: string
+  items?: Array<
+    {
+      _key: string
+    } & PhotoInfoGalleryItem
+  >
+}
+
+export type TextWithBackgroundColor = {
+  _type: 'textWithBackgroundColor'
+  backgroundColor?: '#FCC554' | '#373B45' | '#000000'
+  about?: string
+}
+
+export type CampaignReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'campaign'
+}
+
+export type SanityFileAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset'
+}
+
+export type CampaignSection = {
+  _type: 'campaignSection'
+  campaign?: CampaignReference
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+}
+
+export type Gallery = {
+  _type: 'gallery'
+  items?: Array<
+    {
+      _key: string
+    } & GalleryItem
+  >
+}
+
+export type GalleryItem = {
+  _type: 'galleryItem'
+  type?: 'photo' | 'video'
+  image?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  thumbnail?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  vimeoUrl?: string
+}
+
+export type HeroInfoItem = {
+  _type: 'heroInfoItem'
+  title?: string
+  text?: string
+}
+
+export type ProjectHero = {
+  _type: 'projectHero'
+  backgroundColor?: '#FCC554' | '#373B45' | '#000000' | '#707E69' | '#18181B' | '#8C7E79'
+  title?: string
+  subtitle?: string
+  about?: string
+  infoSection?: InfoSection
+}
+
+export type Video = {
+  _type: 'video'
+  vimeoUrl?: string
+}
+
+export type DocumentariesReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'documentaries'
+}
+
+export type AnimationReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'animation'
+}
+
+export type ListingSection = {
+  _type: 'listingSection'
+  sectionType?: 'documentaries' | 'animations'
+  title?: string
+  items?: Array<{
+    documentary?: DocumentariesReference
+    animation?: AnimationReference
+    _key: string
+  }>
+}
+
+export type Link = {
+  _type: 'link'
+  linkType?: 'href' | 'email' | 'documentaries' | 'animation' | 'campaign'
+  href?: string
+  email?: string
+  documentaries?: DocumentariesReference
+  animation?: AnimationReference
+  campaign?: CampaignReference
+  openInNewTab?: boolean
 }
 
 export type BlockContentTextOnly = Array<{
@@ -97,10 +198,10 @@ export type BlockContent = Array<
       style?: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'blockquote'
       listItem?: 'bullet' | 'number'
       markDefs?: Array<{
-        linkType?: 'href' | 'page' | 'post'
+        linkType?: 'href' | 'email' | 'documentaries'
         href?: string
-        page?: PageReference
-        post?: PostReference
+        email?: string
+        documentaries?: DocumentariesReference
         openInNewTab?: boolean
         _type: 'link'
         _key: string
@@ -119,10 +220,192 @@ export type BlockContent = Array<
     }
 >
 
-export type Button = {
-  _type: 'button'
-  buttonText?: string
-  link?: Link
+export type Campaign = {
+  _id: string
+  _type: 'campaign'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: string
+  slug?: Slug
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+  campaignBuilder?: Array<
+    | ({
+        _key: string
+      } & Video)
+    | ({
+        _key: string
+      } & ProjectHero)
+    | ({
+        _key: string
+      } & Gallery)
+  >
+}
+
+export type Slug = {
+  _type: 'slug'
+  current?: string
+  source?: string
+}
+
+export type HomePage = {
+  _id: string
+  _type: 'homePage'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  seoTitle?: string
+  seoDescription?: string
+  ogImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  sections?: Array<
+    {
+      _key: string
+    } & ListingSection
+  >
+}
+
+export type Animation = {
+  _id: string
+  _type: 'animation'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: string
+  slug?: Slug
+  client?: string
+  category?: 'category-a' | 'category-b' | 'category-c'
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+  animationBuilder?: Array<
+    | ({
+        _key: string
+      } & Video)
+    | ({
+        _key: string
+      } & ProjectHero)
+    | ({
+        _key: string
+      } & Gallery)
+  >
+}
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top?: number
+  bottom?: number
+  left?: number
+  right?: number
+}
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x?: number
+  y?: number
+  height?: number
+  width?: number
+}
+
+export type ContactModule = {
+  _id: string
+  _type: 'contactModule'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+  backgroundColor?: '#FCC554' | '#373B45' | '#000000'
+  centerText?: string
+  hoverCenterText?: string
+  firstColumn?: BlockContent
+  secondColumn?: BlockContent
+  thirdColumn?: BlockContent
+  seoTitle?: string
+  seoDescription?: string
+  ogImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+}
+
+export type Documentaries = {
+  _id: string
+  _type: 'documentaries'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name?: string
+  slug?: Slug
+  client?: string
+  category?: 'most-viewed' | 'most-recent' | 'award-winning'
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+  documentariesBuilder?: Array<
+    | ({
+        _key: string
+      } & Video)
+    | ({
+        _key: string
+      } & ProjectHero)
+    | ({
+        _key: string
+      } & Gallery)
+  >
+}
+
+export type AboutPage = {
+  _id: string
+  _type: 'aboutPage'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  seoTitle?: string
+  seoDescription?: string
+  ogImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  aboutBuilder?: Array<
+    | ({
+        _key: string
+      } & Video)
+    | ({
+        _key: string
+      } & ProjectHero)
+    | ({
+        _key: string
+      } & Gallery)
+    | ({
+        _key: string
+      } & TextWithBackgroundColor)
+    | ({
+        _key: string
+      } & PhotoInfoGallery)
+  >
 }
 
 export type Settings = {
@@ -131,29 +414,15 @@ export type Settings = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
-  description?: Array<{
-    children?: Array<{
-      marks?: Array<string>
-      text?: string
-      _type: 'span'
-      _key: string
-    }>
-    style?: 'normal'
-    listItem?: never
-    markDefs?: Array<{
-      linkType?: 'href' | 'page' | 'post'
-      href?: string
-      page?: PageReference
-      post?: PostReference
-      openInNewTab?: boolean
-      _type: 'link'
-      _key: string
-    }>
-    level?: number
-    _type: 'block'
-    _key: string
-  }>
+  logo?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  welcomeText?: string
+  siteTitle?: string
   ogImage?: {
     asset?: SanityImageAssetReference
     media?: unknown
@@ -163,95 +432,6 @@ export type Settings = {
     metadataBase?: string
     _type: 'image'
   }
-}
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top: number
-  bottom: number
-  left: number
-  right: number
-}
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x: number
-  y: number
-  height: number
-  width: number
-}
-
-export type Page = {
-  _id: string
-  _type: 'page'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name: string
-  slug: Slug
-  heading: string
-  subheading?: string
-  pageBuilder?: Array<
-    | ({
-        _key: string
-      } & CallToAction)
-    | ({
-        _key: string
-      } & InfoSection)
-  >
-}
-
-export type PersonReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'person'
-}
-
-export type Post = {
-  _id: string
-  _type: 'post'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  title: string
-  slug: Slug
-  content?: BlockContent
-  excerpt?: string
-  coverImage?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  }
-  date?: string
-  author?: PersonReference
-}
-
-export type Person = {
-  _id: string
-  _type: 'person'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  firstName: string
-  lastName: string
-  picture: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    alt?: string
-    _type: 'image'
-  }
-}
-
-export type Slug = {
-  _type: 'slug'
-  current: string
-  source?: string
 }
 
 export type SanityAssistInstructionTask = {
@@ -301,7 +481,7 @@ export type AssistInstructionContextReference = {
 
 export type SanityAssistInstructionContext = {
   _type: 'sanity.assist.instruction.context'
-  reference: AssistInstructionContextReference
+  reference?: AssistInstructionContextReference
 }
 
 export type AssistInstructionContext = {
@@ -329,7 +509,7 @@ export type AssistInstructionContext = {
 
 export type SanityAssistInstructionUserInput = {
   _type: 'sanity.assist.instruction.userInput'
-  message: string
+  message?: string
   description?: string
 }
 
@@ -412,9 +592,9 @@ export type SanityImagePalette = {
 
 export type SanityImageDimensions = {
   _type: 'sanity.imageDimensions'
-  height: number
-  width: number
-  aspectRatio: number
+  height?: number
+  width?: number
+  aspectRatio?: number
 }
 
 export type SanityImageMetadata = {
@@ -488,23 +668,35 @@ export type Geopoint = {
 }
 
 export type AllSanitySchemaTypes =
-  | PageReference
-  | PostReference
-  | Link
-  | SanityImageAssetReference
-  | CallToAction
   | InfoSection
+  | SanityImageAssetReference
+  | PhotoInfoGalleryItem
+  | PhotoInfoGallery
+  | TextWithBackgroundColor
+  | CampaignReference
+  | SanityFileAssetReference
+  | CampaignSection
+  | Gallery
+  | GalleryItem
+  | HeroInfoItem
+  | ProjectHero
+  | Video
+  | DocumentariesReference
+  | AnimationReference
+  | ListingSection
+  | Link
   | BlockContentTextOnly
   | BlockContent
-  | Button
-  | Settings
+  | Campaign
+  | Slug
+  | HomePage
+  | Animation
   | SanityImageCrop
   | SanityImageHotspot
-  | Page
-  | PersonReference
-  | Post
-  | Person
-  | Slug
+  | ContactModule
+  | Documentaries
+  | AboutPage
+  | Settings
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus
   | SanityAssistSchemaTypeAnnotations

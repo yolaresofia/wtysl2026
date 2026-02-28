@@ -4,7 +4,7 @@ import type {Link} from '../../../sanity.types'
 
 /**
  * Link schema object. This link object lets the user first select the type of link and then
- * then enter the URL, page reference, or post reference - depending on the type selected.
+ * then enter the URL, page reference - depending on the type selected.
  * Learn more: https://www.sanity.io/docs/studio/object-type
  */
 
@@ -22,8 +22,10 @@ export const link = defineType({
       options: {
         list: [
           {title: 'URL', value: 'href'},
-          {title: 'Page', value: 'page'},
-          {title: 'Post', value: 'post'},
+          {title: 'Email', value: 'email'},
+          {title: 'Documentary', value: 'documentaries'},
+          {title: 'Animation', value: 'animation'},
+          {title: 'Campaign', value: 'campaign'},
         ],
         layout: 'radio',
       },
@@ -44,33 +46,63 @@ export const link = defineType({
         }),
     }),
     defineField({
-      name: 'page',
-      title: 'Page',
-      type: 'reference',
-      to: [{type: 'page'}],
-      hidden: ({parent}) => parent?.linkType !== 'page',
+      name: 'email',
+      title: 'Email',
+      type: 'string',
+      hidden: ({parent}) => parent?.linkType !== 'email',
       validation: (Rule) =>
-        // Custom validation to ensure page reference is provided if the link type is 'page'
         Rule.custom((value, context) => {
-          const parent = context.parent as Link
-          if (parent?.linkType === 'page' && !value) {
-            return 'Page reference is required when Link Type is Page'
+          const parent = context.parent as {linkType?: string}
+          if (parent?.linkType === 'email' && !value) {
+            return 'Email is required when Link Type is Email'
           }
           return true
         }),
     }),
     defineField({
-      name: 'post',
-      title: 'Post',
+      name: 'documentaries',
+      title: 'Documentaries',
       type: 'reference',
-      to: [{type: 'post'}],
-      hidden: ({parent}) => parent?.linkType !== 'post',
+      to: [{type: 'documentaries'}],
+      hidden: ({parent}) => parent?.linkType !== 'documentaries',
       validation: (Rule) =>
-        // Custom validation to ensure post reference is provided if the link type is 'post'
+        // Custom validation to ensure project reference is provided if the link type is 'documentaries'
         Rule.custom((value, context) => {
           const parent = context.parent as Link
-          if (parent?.linkType === 'post' && !value) {
-            return 'Post reference is required when Link Type is Post'
+          if (parent?.linkType === 'documentaries' && !value) {
+            return 'Documentaries reference is required when Link Type is Documentaries'
+          }
+          return true
+        }),
+    }),
+     defineField({
+      name: 'animation',
+      title: 'Animation',
+      type: 'reference',
+      to: [{type: 'animation'}],
+      hidden: ({parent}) => parent?.linkType !== 'animation',
+      validation: (Rule) =>
+        // Custom validation to ensure project reference is provided if the link type is 'project'
+        Rule.custom((value, context) => {
+          const parent = context.parent as Link
+          if (parent?.linkType === 'animation' && !value) {
+            return 'Animation reference is required when Link Type is Project'
+          }
+          return true
+        }),
+    }),
+     defineField({
+      name: 'campaign',
+      title: 'Campaign',
+      type: 'reference',
+      to: [{type: 'campaign'}],
+      hidden: ({parent}) => parent?.linkType !== 'campaign',
+      validation: (Rule) =>
+        // Custom validation to ensure project reference is provided if the link type is 'project'
+        Rule.custom((value, context) => {
+          const parent = context.parent as Link
+          if (parent?.linkType === 'campaign' && !value) {
+            return 'Campaign reference is required when Link Type is Project'
           }
           return true
         }),

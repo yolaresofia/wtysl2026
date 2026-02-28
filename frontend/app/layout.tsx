@@ -9,13 +9,13 @@ import {VisualEditing} from 'next-sanity/visual-editing'
 import {Toaster} from 'sonner'
 
 import DraftModeToast from '@/app/components/DraftModeToast'
-import Footer from '@/app/components/Footer'
-import Header from '@/app/components/Header'
 import * as demo from '@/sanity/lib/demo'
 import {sanityFetch, SanityLive} from '@/sanity/lib/live'
 import {settingsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import {handleError} from '@/app/client-utils'
+import Header from './components/Header'
+import Footer from './components/Footer'
 
 /**
  * Generate metadata for the page.
@@ -48,6 +48,9 @@ export async function generateMetadata(): Promise<Metadata> {
     description: toPlainText(description),
     openGraph: {
       images: ogImage ? [ogImage] : [],
+    },
+    icons: {
+      icon: '/favicon.png',
     },
   }
 }

@@ -1,15 +1,13 @@
 import React from 'react'
 
-import Cta from '@/app/components/Cta'
-import Info from '@/app/components/InfoSection'
 import {dataAttr} from '@/sanity/lib/utils'
-import {PageBuilderSection} from '@/sanity/lib/types'
+import {ProjectBuilderSection} from '@/sanity/lib/types'
 
 type BlockProps = {
   index: number
-  block: PageBuilderSection
-  pageId: string
-  pageType: string
+  block: ProjectBuilderSection
+  projectId: string
+  projectType: string
 }
 
 type BlocksType = {
@@ -17,31 +15,29 @@ type BlocksType = {
 }
 
 const Blocks = {
-  callToAction: Cta,
-  infoSection: Info,
 } as BlocksType
 
 /**
- * Used by the <PageBuilder>, this component renders a the component that matches the block type.
+ * Used by the <ProjectBuilder>, this component renders a the component that matches the block type.
  */
-export default function BlockRenderer({block, index, pageId, pageType}: BlockProps) {
+export default function BlockRenderer({block, index, projectId, projectType}: BlockProps) {
   // Block does exist
   if (typeof Blocks[block._type] !== 'undefined') {
     return (
       <div
         key={block._key}
         data-sanity={dataAttr({
-          id: pageId,
-          type: pageType,
-          path: `pageBuilder[_key=="${block._key}"]`,
+          id: projectId,
+          type: projectType,
+          path: `projectBuilder[_key=="${block._key}"]`,
         }).toString()}
       >
         {React.createElement(Blocks[block._type], {
           key: block._key,
           block: block,
           index: index,
-          pageId: pageId,
-          pageType: pageType,
+          projectId: projectId,
+          projectType: projectType,
         })}
       </div>
     )

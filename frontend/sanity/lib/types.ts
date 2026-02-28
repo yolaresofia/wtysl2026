@@ -1,17 +1,16 @@
-import {GetPageQueryResult} from '@/sanity.types'
+import {GetProjectQueryResult} from '@/sanity.types'
 
-export type PageBuilderSection = NonNullable<NonNullable<GetPageQueryResult>['pageBuilder']>[number]
-export type ExtractPageBuilderType<T extends PageBuilderSection['_type']> = Extract<
-  PageBuilderSection,
+export type ProjectBuilderSection = NonNullable<NonNullable<GetProjectQueryResult>['projectBuilder']>[number]
+export type ExtractProjectBuilderType<T extends ProjectBuilderSection['_type']> = Extract<
+  ProjectBuilderSection,
   {_type: T}
 >
 
-// Represents a Link after GROQ dereferencing (page/post become slug strings)
+// Represents a Link after GROQ dereferencing (project become slug strings)
 export type DereferencedLink = {
   _type: 'link'
-  linkType?: 'href' | 'page' | 'post'
+  linkType?: 'href' | 'project'
   href?: string
-  page?: string | null
-  post?: string | null
+  project?: string | null
   openInNewTab?: boolean
 }

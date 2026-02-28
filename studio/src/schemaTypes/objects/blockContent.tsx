@@ -35,8 +35,8 @@ export const blockContent = defineType({
                 options: {
                   list: [
                     {title: 'URL', value: 'href'},
-                    {title: 'Page', value: 'page'},
-                    {title: 'Post', value: 'post'},
+                    {title: 'Email', value: 'email'},
+                    {title: 'Documentary', value: 'documentaries'},
                   ],
                   layout: 'radio',
                 },
@@ -56,31 +56,30 @@ export const blockContent = defineType({
                   }),
               }),
               defineField({
-                name: 'page',
-                title: 'Page',
-                type: 'reference',
-                to: [{type: 'page'}],
-                hidden: ({parent}) => parent?.linkType !== 'page',
+                name: 'email',
+                title: 'Email',
+                type: 'string',
+                hidden: ({parent}) => parent?.linkType !== 'email',
                 validation: (Rule) =>
                   Rule.custom((value, context) => {
-                    const parent = context.parent as Link
-                    if (parent?.linkType === 'page' && !value) {
-                      return 'Page reference is required when Link Type is Page'
+                    const parent = context.parent as {linkType?: string}
+                    if (parent?.linkType === 'email' && !value) {
+                      return 'Email is required when Link Type is Email'
                     }
                     return true
                   }),
               }),
               defineField({
-                name: 'post',
-                title: 'Post',
+                name: 'documentaries',
+                title: 'Documentaries',
                 type: 'reference',
-                to: [{type: 'post'}],
-                hidden: ({parent}) => parent?.linkType !== 'post',
+                to: [{type: 'documentaries'}],
+                hidden: ({parent}) => parent?.linkType !== 'documentaries',
                 validation: (Rule) =>
                   Rule.custom((value, context) => {
                     const parent = context.parent as Link
-                    if (parent?.linkType === 'post' && !value) {
-                      return 'Post reference is required when Link Type is Post'
+                    if (parent?.linkType === 'documentaries' && !value) {
+                      return 'Documentaries reference is required when Link Type is Documentaries'
                     }
                     return true
                   }),
