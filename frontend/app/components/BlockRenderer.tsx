@@ -13,10 +13,10 @@ import TextWithBackgroundColor from './TextWithBackgroundColor'
 import Video from './Video'
 
 export type AnyBuilderBlock =
-  | DocumentaryBuilderBlock
-  | AnimationBuilderBlock
-  | CampaignBuilderBlock
-  | AboutBuilderBlock
+| DocumentaryBuilderBlock
+| AnimationBuilderBlock
+| CampaignBuilderBlock
+| AboutBuilderBlock
 
 type BlockProps = {
   index: number
@@ -26,11 +26,8 @@ type BlockProps = {
   builderField: string
 }
 
-type BlocksType = {
-  [key: string]: React.FC<BlockProps>
-}
-
-const Blocks: BlocksType = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const Blocks: Record<string, React.FC<any>> = {
   gallery: Gallery,
   photoInfoGallery: PhotoInfoGallery,
   projectHero: ProjectHero,
@@ -51,7 +48,7 @@ export default function BlockRenderer({block, index, documentId, documentType, b
       >
         {React.createElement(Blocks[block._type], {
           key: block._key,
-          block,
+          block: block as never,
           index,
           documentId,
           documentType,
