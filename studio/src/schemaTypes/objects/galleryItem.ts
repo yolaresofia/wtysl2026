@@ -28,11 +28,23 @@ export const galleryItem = defineType({
       hidden: ({parent}) => parent?.type === 'video',
     }),
     defineField({
+      name: 'photoAltText',
+      title: 'Alt Text',
+      type: 'string',
+      hidden: ({parent}) => parent?.type === 'video',
+    }),
+    defineField({
       name: 'thumbnail',
       title: 'Thumbnail',
       type: 'image',
       description: 'Cover image displayed before the video plays',
       options: {hotspot: true},
+      hidden: ({parent}) => parent?.type !== 'video',
+    }),
+    defineField({
+      name: 'videoAltText',
+      title: 'Alt Text',
+      type: 'string',
       hidden: ({parent}) => parent?.type !== 'video',
     }),
     defineField({

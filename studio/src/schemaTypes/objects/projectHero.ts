@@ -41,6 +41,11 @@ export const projectHero = defineType({
       type: 'text',
     }),
     defineField({
+      name: 'infoSectionTitle',
+      title: 'Info Section Title',
+      type: 'string',
+    }),
+    defineField({
       name: 'infoSection',
       title: 'Info Section',
       type: 'object',

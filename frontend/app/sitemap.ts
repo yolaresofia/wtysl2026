@@ -1,56 +1,38 @@
 import {MetadataRoute} from 'next'
 import {sanityFetch} from '@/sanity/lib/live'
-import {sitemapData} from '@/sanity/lib/queries'
+import {sitemapQuery} from '@/sanity/lib/queries'
 import {headers} from 'next/headers'
 
-/**
- * This file creates a sitemap (sitemap.xml) for the application. Learn more about sitemaps in Next.js here: https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
- * Be sure to update the `changeFrequency` and `priority` values to match your application's content.
- */
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const allProjects = await sanityFetch({
-    query: sitemapData,
-  })
+  const {data: documents} = await sanityFetch({query: sitemapQuery})
   const headersList = await headers()
-  const sitemap: MetadataRoute.Sitemap = []
   const domain: string = headersList.get('host') as string
-  sitemap.push({
-    url: domain as string,
-    lastModified: new Date(),
-    priority: 1,
-    changeFrequency: 'monthly',
-  })
 
-  if (allProjects != null && allProjects.data.length != 0) {
-    let priority: number
-    let changeFrequency:
-      | 'monthly'
-      | 'always'
-      | 'hourly'
-      | 'daily'
-      | 'weekly'
-      | 'yearly'
-      | 'never'
-      | undefined
-    let url: string
+  const result: MetadataRoute.Sitemap = [
+    {url: domain, lastModified: new Date(), priority: 1, changeFrequency: 'monthly'},
+  ]
 
-    for (const p of allProjects.data) {
-      switch (p._type) {
-        case 'project':
-          priority = 0.8
-          changeFrequency = 'monthly'
-          url = `${domain}/${p.slug}`
-          break
-      }
-      sitemap.push({
-        lastModified: p._updatedAt || new Date(),
-        priority,
-        changeFrequency,
-        url,
-      })
+  for (const doc of documents ?? []) {
+    let path: string | null = null
+    switch (doc._type) {
+      case 'documentaries':
+        path = `/documentaries/${doc.slug}`
+        break
+      case 'animation':
+        path = `/animations/${doc.slug}`
+        break
+      case 'campaign':
+        path = `/campaigns/${doc.slug}`
+        break
     }
+    if (!path) continue
+    result.push({
+      url: `${domain}${path}`,
+      lastModified: doc._updatedAt || new Date(),
+      priority: 0.8,
+      changeFrequency: 'monthly',
+    })
   }
 
-  return sitemap
+  return result
 }

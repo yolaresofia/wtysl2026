@@ -1,52 +1,69 @@
 import React from 'react'
-
 import {dataAttr} from '@/sanity/lib/utils'
-import {ProjectBuilderSection} from '@/sanity/lib/types'
+import type {
+  DocumentaryBuilderBlock,
+  AnimationBuilderBlock,
+  CampaignBuilderBlock,
+  AboutBuilderBlock,
+} from '@/sanity/lib/types'
+import Gallery from './Gallery'
+import PhotoInfoGallery from './PhotoInfoGallery'
+import ProjectHero from './ProjectHero'
+import TextWithBackgroundColor from './TextWithBackgroundColor'
+import Video from './Video'
+
+export type AnyBuilderBlock =
+  | DocumentaryBuilderBlock
+  | AnimationBuilderBlock
+  | CampaignBuilderBlock
+  | AboutBuilderBlock
 
 type BlockProps = {
   index: number
-  block: ProjectBuilderSection
-  projectId: string
-  projectType: string
+  block: AnyBuilderBlock
+  documentId: string
+  documentType: string
+  builderField: string
 }
 
 type BlocksType = {
   [key: string]: React.FC<BlockProps>
 }
 
-const Blocks = {
-} as BlocksType
+const Blocks: BlocksType = {
+  gallery: Gallery,
+  photoInfoGallery: PhotoInfoGallery,
+  projectHero: ProjectHero,
+  textWithBackgroundColor: TextWithBackgroundColor,
+  video: Video
+}
 
-/**
- * Used by the <ProjectBuilder>, this component renders a the component that matches the block type.
- */
-export default function BlockRenderer({block, index, projectId, projectType}: BlockProps) {
-  // Block does exist
+export default function BlockRenderer({block, index, documentId, documentType, builderField}: BlockProps) {
   if (typeof Blocks[block._type] !== 'undefined') {
     return (
       <div
         key={block._key}
         data-sanity={dataAttr({
-          id: projectId,
-          type: projectType,
-          path: `projectBuilder[_key=="${block._key}"]`,
+          id: documentId,
+          type: documentType,
+          path: `${builderField}[_key=="${block._key}"]`,
         }).toString()}
       >
         {React.createElement(Blocks[block._type], {
           key: block._key,
-          block: block,
-          index: index,
-          projectId: projectId,
-          projectType: projectType,
+          block,
+          index,
+          documentId,
+          documentType,
+          builderField,
         })}
       </div>
     )
   }
-  // Block doesn't exist yet
   return React.createElement(
     () => (
-      <div className="w-full bg-gray-100 text-center text-gray-500 p-20 rounded">
-        A &ldquo;{block._type}&rdquo; block hasn&apos;t been created
+      <div className="w-full text-center text-gray-500 p-20">
+        A &ldquo;{block._type}&rdquo; block hasn&apos;t been built yet
       </div>
     ),
     {key: block._key},

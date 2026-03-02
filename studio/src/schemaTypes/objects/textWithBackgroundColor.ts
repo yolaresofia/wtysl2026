@@ -25,7 +25,7 @@ export const textWithBackgroundColor = defineType({
     defineField({
       name: 'about',
       title: 'About',
-      type: 'text',
+      type: 'blockContent',
     }),
   ],
   preview: {

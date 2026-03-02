@@ -14,7 +14,7 @@
 
 // Source: ../sanity.schema.json
 export type InfoSection = {
-  title?: string
+  title: string
   items?: Array<
     {
       _key: string
@@ -45,7 +45,8 @@ export type PhotoInfoGalleryItem = {
 
 export type PhotoInfoGallery = {
   _type: 'photoInfoGallery'
-  title?: string
+  backgroundColor: '#FCC554' | '#373B45' | '#000000' | '#707E69' | '#18181B' | '#8C7E79'
+  title: string
   items?: Array<
     {
       _key: string
@@ -55,8 +56,8 @@ export type PhotoInfoGallery = {
 
 export type TextWithBackgroundColor = {
   _type: 'textWithBackgroundColor'
-  backgroundColor?: '#FCC554' | '#373B45' | '#000000'
-  about?: string
+  backgroundColor: '#FCC554' | '#373B45' | '#000000'
+  about?: BlockContent
 }
 
 export type CampaignReference = {
@@ -75,7 +76,7 @@ export type SanityFileAssetReference = {
 
 export type CampaignSection = {
   _type: 'campaignSection'
-  campaign?: CampaignReference
+  campaign: CampaignReference
   backgroundVideo?: {
     asset?: SanityFileAssetReference
     media?: unknown
@@ -94,7 +95,7 @@ export type Gallery = {
 
 export type GalleryItem = {
   _type: 'galleryItem'
-  type?: 'photo' | 'video'
+  type: 'photo' | 'video'
   image?: {
     asset?: SanityImageAssetReference
     media?: unknown
@@ -102,6 +103,7 @@ export type GalleryItem = {
     crop?: SanityImageCrop
     _type: 'image'
   }
+  photoAltText?: string
   thumbnail?: {
     asset?: SanityImageAssetReference
     media?: unknown
@@ -109,21 +111,23 @@ export type GalleryItem = {
     crop?: SanityImageCrop
     _type: 'image'
   }
+  videoAltText?: string
   vimeoUrl?: string
 }
 
 export type HeroInfoItem = {
   _type: 'heroInfoItem'
-  title?: string
-  text?: string
+  title: string
+  text: string
 }
 
 export type ProjectHero = {
   _type: 'projectHero'
-  backgroundColor?: '#FCC554' | '#373B45' | '#000000' | '#707E69' | '#18181B' | '#8C7E79'
+  backgroundColor: '#FCC554' | '#373B45' | '#000000' | '#707E69' | '#18181B' | '#8C7E79'
   title?: string
   subtitle?: string
   about?: string
+  infoSectionTitle?: string
   infoSection?: InfoSection
 }
 
@@ -148,7 +152,7 @@ export type AnimationReference = {
 
 export type ListingSection = {
   _type: 'listingSection'
-  sectionType?: 'documentaries' | 'animations'
+  sectionType: 'documentaries' | 'animations'
   title?: string
   items?: Array<{
     documentary?: DocumentariesReference
@@ -220,44 +224,14 @@ export type BlockContent = Array<
     }
 >
 
-export type Campaign = {
+export type Animation = {
   _id: string
-  _type: 'campaign'
+  _type: 'animation'
   _createdAt: string
   _updatedAt: string
   _rev: string
-  name?: string
-  slug?: Slug
-  backgroundVideo?: {
-    asset?: SanityFileAssetReference
-    media?: unknown
-    _type: 'file'
-  }
-  campaignBuilder?: Array<
-    | ({
-        _key: string
-      } & Video)
-    | ({
-        _key: string
-      } & ProjectHero)
-    | ({
-        _key: string
-      } & Gallery)
-  >
-}
-
-export type Slug = {
-  _type: 'slug'
-  current?: string
-  source?: string
-}
-
-export type HomePage = {
-  _id: string
-  _type: 'homePage'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
+  name: string
+  slug: Slug
   seoTitle?: string
   seoDescription?: string
   ogImage?: {
@@ -267,23 +241,8 @@ export type HomePage = {
     crop?: SanityImageCrop
     _type: 'image'
   }
-  sections?: Array<
-    {
-      _key: string
-    } & ListingSection
-  >
-}
-
-export type Animation = {
-  _id: string
-  _type: 'animation'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name?: string
-  slug?: Slug
   client?: string
-  category?: 'category-a' | 'category-b' | 'category-c'
+  category: 'category-a' | 'category-b' | 'category-c'
   backgroundVideo?: {
     asset?: SanityFileAssetReference
     media?: unknown
@@ -304,18 +263,59 @@ export type Animation = {
 
 export type SanityImageCrop = {
   _type: 'sanity.imageCrop'
-  top?: number
-  bottom?: number
-  left?: number
-  right?: number
+  top: number
+  bottom: number
+  left: number
+  right: number
 }
 
 export type SanityImageHotspot = {
   _type: 'sanity.imageHotspot'
-  x?: number
-  y?: number
-  height?: number
-  width?: number
+  x: number
+  y: number
+  height: number
+  width: number
+}
+
+export type Slug = {
+  _type: 'slug'
+  current: string
+  source?: string
+}
+
+export type Campaign = {
+  _id: string
+  _type: 'campaign'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: string
+  slug: Slug
+  seoTitle?: string
+  seoDescription?: string
+  ogImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+  campaignBuilder?: Array<
+    | ({
+        _key: string
+      } & Video)
+    | ({
+        _key: string
+      } & ProjectHero)
+    | ({
+        _key: string
+      } & Gallery)
+  >
 }
 
 export type ContactModule = {
@@ -329,9 +329,9 @@ export type ContactModule = {
     media?: unknown
     _type: 'file'
   }
-  backgroundColor?: '#FCC554' | '#373B45' | '#000000'
-  centerText?: string
-  hoverCenterText?: string
+  backgroundColor: '#FCC554' | '#373B45' | '#000000'
+  centerText: string
+  hoverCenterText: string
   firstColumn?: BlockContent
   secondColumn?: BlockContent
   thirdColumn?: BlockContent
@@ -344,34 +344,6 @@ export type ContactModule = {
     crop?: SanityImageCrop
     _type: 'image'
   }
-}
-
-export type Documentaries = {
-  _id: string
-  _type: 'documentaries'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  name?: string
-  slug?: Slug
-  client?: string
-  category?: 'most-viewed' | 'most-recent' | 'award-winning'
-  backgroundVideo?: {
-    asset?: SanityFileAssetReference
-    media?: unknown
-    _type: 'file'
-  }
-  documentariesBuilder?: Array<
-    | ({
-        _key: string
-      } & Video)
-    | ({
-        _key: string
-      } & ProjectHero)
-    | ({
-        _key: string
-      } & Gallery)
-  >
 }
 
 export type AboutPage = {
@@ -395,16 +367,47 @@ export type AboutPage = {
       } & Video)
     | ({
         _key: string
-      } & ProjectHero)
-    | ({
-        _key: string
-      } & Gallery)
-    | ({
-        _key: string
       } & TextWithBackgroundColor)
     | ({
         _key: string
       } & PhotoInfoGallery)
+  >
+}
+
+export type Documentaries = {
+  _id: string
+  _type: 'documentaries'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: string
+  slug: Slug
+  seoTitle?: string
+  seoDescription?: string
+  ogImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  client?: string
+  category: 'most-viewed' | 'most-recent' | 'award-winning'
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+  documentariesBuilder?: Array<
+    | ({
+        _key: string
+      } & Video)
+    | ({
+        _key: string
+      } & ProjectHero)
+    | ({
+        _key: string
+      } & Gallery)
   >
 }
 
@@ -422,7 +425,8 @@ export type Settings = {
     _type: 'image'
   }
   welcomeText?: string
-  siteTitle?: string
+  siteTitle: string
+  seoDescription?: string
   ogImage?: {
     asset?: SanityImageAssetReference
     media?: unknown
@@ -481,7 +485,7 @@ export type AssistInstructionContextReference = {
 
 export type SanityAssistInstructionContext = {
   _type: 'sanity.assist.instruction.context'
-  reference?: AssistInstructionContextReference
+  reference: AssistInstructionContextReference
 }
 
 export type AssistInstructionContext = {
@@ -509,7 +513,7 @@ export type AssistInstructionContext = {
 
 export type SanityAssistInstructionUserInput = {
   _type: 'sanity.assist.instruction.userInput'
-  message?: string
+  message: string
   description?: string
 }
 
@@ -592,9 +596,9 @@ export type SanityImagePalette = {
 
 export type SanityImageDimensions = {
   _type: 'sanity.imageDimensions'
-  height?: number
-  width?: number
-  aspectRatio?: number
+  height: number
+  width: number
+  aspectRatio: number
 }
 
 export type SanityImageMetadata = {
@@ -604,6 +608,7 @@ export type SanityImageMetadata = {
   palette?: SanityImagePalette
   lqip?: string
   blurHash?: string
+  thumbHash?: string
   hasAlpha?: boolean
   isOpaque?: boolean
 }
@@ -687,15 +692,14 @@ export type AllSanitySchemaTypes =
   | Link
   | BlockContentTextOnly
   | BlockContent
-  | Campaign
-  | Slug
-  | HomePage
   | Animation
   | SanityImageCrop
   | SanityImageHotspot
+  | Slug
+  | Campaign
   | ContactModule
-  | Documentaries
   | AboutPage
+  | Documentaries
   | Settings
   | SanityAssistInstructionTask
   | SanityAssistTaskStatus

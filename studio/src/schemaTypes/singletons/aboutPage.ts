@@ -34,7 +34,11 @@ export const aboutPage = defineType({
       name: 'aboutBuilder',
       title: 'About builder',
       type: 'array',
-      of: [{type: 'video'}, {type: 'projectHero'}, {type: 'gallery'}, {type: 'textWithBackgroundColor'}, {type: 'photoInfoGallery'}],
+      of: [
+        {type: 'video'},
+        {type: 'textWithBackgroundColor'},
+        {type: 'photoInfoGallery'},
+      ],
       options: {
         insertMenu: {
           // Configure the "Add Item" menu to display a thumbnail preview of the content type. https://www.sanity.io/docs/studio/array-type#efb1fe03459d

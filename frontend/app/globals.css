@@ -41,5 +41,18 @@
   --color-gray-900: #1b1d27;
   --color-gray-950: #13141b;
 
+  --font-neue: 'Neue', sans-serif;
+  --font-display: 'Neue', sans-serif;
+  --font-sans: 'Neue', sans-serif;
+
   --default-transition-duration: 250ms;
+}
+
+@font-face {
+  font-family: "Neue";
+  src: url("/fonts/PPNeueMontreal-Medium.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block; /* Changed from 'swap' - blocks text until font loads */
+  /* Alternative: font-display: optional; - only use font if already cached */
 }

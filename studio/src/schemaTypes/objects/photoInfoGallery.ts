@@ -8,6 +8,24 @@ export const photoInfoGallery = defineType({
   icon: ImagesIcon,
   fields: [
     defineField({
+      name: 'backgroundColor',
+      title: 'Background Color',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Yellow — #FCC554', value: '#FCC554'},
+          {title: 'Dark Blue — #373B45', value: '#373B45'},
+          {title: 'Black — #000000', value: '#000000'},
+          {title: 'Sage — #707E69', value: '#707E69'},
+          {title: 'Dark — #18181B', value: '#18181B'},
+          {title: 'Sand — #8C7E79', value: '#8C7E79'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: '#FCC554',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
@@ -27,7 +45,7 @@ export const photoInfoGallery = defineType({
     prepare({items}) {
       const count = items?.length ?? 0
       return {
-        title: 'Gallery',
+        title: 'Photo info gallery',
         subtitle: `${count} item${count === 1 ? '' : 's'}`,
         media: ImagesIcon,
       }

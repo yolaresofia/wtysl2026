@@ -28,6 +28,13 @@ export const settings = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: 'seoDescription',
+      title: 'SEO Description',
+      description: 'Used in search engine results. Max 160 characters.',
+      type: 'string',
+      validation: (rule) => rule.max(160),
+    }),
+    defineField({
       name: 'ogImage',
       title: 'Open Graph Image',
       type: 'image',
