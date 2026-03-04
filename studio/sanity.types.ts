@@ -331,7 +331,7 @@ export type ContactModule = {
     media?: unknown
     _type: 'file'
   }
-  backgroundColor: '#FCC554' | '#373B45' | '#000000'
+  backgroundColor?: '#FCC554' | '#373B45' | '#000000'
   centerText: string
   hoverCenterText: string
   firstColumn?: BlockContent
@@ -427,6 +427,11 @@ export type Settings = {
     _type: 'image'
   }
   welcomeText?: string
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
   siteTitle: string
   seoDescription?: string
   ogImage?: {

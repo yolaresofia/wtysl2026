@@ -331,7 +331,7 @@ export type ContactModule = {
     media?: unknown
     _type: 'file'
   }
-  backgroundColor: '#FCC554' | '#373B45' | '#000000'
+  backgroundColor?: '#FCC554' | '#373B45' | '#000000'
   centerText: string
   hoverCenterText: string
   firstColumn?: BlockContent
@@ -427,6 +427,11 @@ export type Settings = {
     _type: 'image'
   }
   welcomeText?: string
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
   siteTitle: string
   seoDescription?: string
   ogImage?: {
@@ -729,7 +734,7 @@ export declare const internalGroqTypeReferenceTo: unique symbol
 
 // Source: sanity/lib/queries.ts
 // Variable: settingsQuery
-// Query: *[_type == "settings"][0] {    logo {  ...,  asset->},    welcomeText,    siteTitle,    seoDescription,    ogImage {  ...,  asset->}  }
+// Query: *[_type == "settings"][0] {    logo {  ...,  asset->},    welcomeText,    backgroundVideo {   "url": asset->url},    siteTitle,    seoDescription,    ogImage {  ...,  asset->}  }
 export type SettingsQueryResult = {
   logo: {
     asset: {
@@ -760,6 +765,9 @@ export type SettingsQueryResult = {
     _type: 'image'
   } | null
   welcomeText: string | null
+  backgroundVideo: {
+    url: string | null
+  } | null
   siteTitle: string
   seoDescription: string | null
   ogImage: {
@@ -801,7 +809,7 @@ export type ContactModuleQueryResult = {
   backgroundVideo: {
     url: string | null
   } | null
-  backgroundColor: '#000000' | '#373B45' | '#FCC554'
+  backgroundColor: '#000000' | '#373B45' | '#FCC554' | null
   centerText: string
   hoverCenterText: string
   firstColumn: Array<
@@ -1455,7 +1463,7 @@ export type SitemapQueryResult = Array<
 import '@sanity/client'
 declare module '@sanity/client' {
   interface SanityQueries {
-    '\n  *[_type == "settings"][0] {\n    logo {\n  ...,\n  asset->\n},\n    welcomeText,\n    siteTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n}\n  }\n': SettingsQueryResult
+    '\n  *[_type == "settings"][0] {\n    logo {\n  ...,\n  asset->\n},\n    welcomeText,\n    backgroundVideo {\n   "url": asset->url\n},\n    siteTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n}\n  }\n': SettingsQueryResult
     '\n  *[_type == "contactModule"][0] {\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n}\n  }\n': ContactModuleQueryResult
     '\n  *[_type == "documentaries"] | order(_createdAt desc) {\n    _id,\n    name,\n    "slug": slug.current,\n    client,\n    category,\n    backgroundVideo {\n   "url": asset->url\n}\n  }\n': DocumentariesListingQueryResult
     '\n  *[_type == "documentaries" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    client,\n    backgroundVideo {\n   "url": asset->url\n},\n    documentariesBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n     title\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n  backgroundColor,\n  items[]{\n    _key,\n    type,\n    "imageUrl": select(type == "photo" => image.asset->url),\n    "photoAltText": select(type == "photo" => photoAltText),\n    "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n    "videoAltText": select(type == "video" => videoAltText),\n    "vimeoUrl": select(type == "video" => vimeoUrl)\n  }\n}\n}\n  }\n': DocumentaryBySlugQueryResult

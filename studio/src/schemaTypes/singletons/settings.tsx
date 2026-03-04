@@ -21,6 +21,15 @@ export const settings = defineType({
       type: 'string',
     }),
     defineField({
+      name: 'backgroundVideo',
+      title: 'Background Video',
+      description: 'Used as the background video for the opening animation on the homepage.',
+      type: 'file',
+      options: {
+        accept: 'video/*',
+      },
+    }),
+    defineField({
       name: 'siteTitle',
       title: 'Site Title',
       description: 'Used in browser tab and search engine results.',

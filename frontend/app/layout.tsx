@@ -12,6 +12,7 @@ import {settingsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import {handleError} from '@/app/client-utils'
 import Header from './components/Header'
+import HeaderWrapper from './components/HeaderWrapper'
 
 /**
  * Generate metadata for the page.
@@ -58,7 +59,9 @@ export default async function RootLayout({children}: {children: React.ReactNode}
           )}
           {/* The <SanityLive> component is responsible for making all sanityFetch calls in your application live, so should always be rendered. */}
           <SanityLive onError={handleError} />
-          <Header />
+          <HeaderWrapper>
+            <Header />
+          </HeaderWrapper>
           <main className="">{children}</main>
         </section>
         <SpeedInsights />

@@ -72,6 +72,7 @@ export const settingsQuery = defineQuery(`
   *[_type == "settings"][0] {
     logo ${imageFragment},
     welcomeText,
+    backgroundVideo ${videoFragment},
     siteTitle,
     seoDescription,
     ogImage ${imageFragment}
