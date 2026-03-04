@@ -10,7 +10,7 @@ export default function ProjectHero({
 }: Props) {
   return (
     <div
-      className="h-screen text-white px-4 flex flex-col justify-center"
+      className="h-screen text-white px-9 flex flex-col justify-center"
       style={{backgroundColor: backgroundColor}}
     >
       <div className="flex flex-col gap-y-10">

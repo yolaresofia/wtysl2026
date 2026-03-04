@@ -8,11 +8,10 @@ type Props = {
 
 export default function PhotoInfoGallery({block}: Props) {
   const {items} = block
-  console.log(block)
   return (
-    <div className="flex justify-between px-4 py-38 text-white" style={{backgroundColor: block.backgroundColor}}>
-      <p className="text-[13px]">{block.title}</p>
-      <div className="grid lg:grid-cols-4 md:grid-cols-3 max-w-7xl gap-10">
+    <div className="flex justify-between xl:flex-row flex-col px-9 py-38 text-white" style={{backgroundColor: block.backgroundColor}}>
+      <p className="text-[13px] pb-12 lg:pb-0">{block.title}</p>
+      <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 max-w-7xl gap-10">
         {items?.map((item) => {
           return (
             <div key={item._key}>

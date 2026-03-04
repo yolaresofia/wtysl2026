@@ -49,10 +49,32 @@
 }
 
 @font-face {
-  font-family: "Neue";
-  src: url("/fonts/PPNeueMontreal-Medium.woff2") format("woff2");
+  font-family: 'Neue';
+  src: url('/fonts/PPNeueMontreal-Medium.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: block; /* Changed from 'swap' - blocks text until font loads */
   /* Alternative: font-display: optional; - only use font if already cached */
+}
+
+@layer base {
+  html,
+  body {
+    overscroll-behavior: none;
+  }
+  .vimeo-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vimeo-container iframe {
+    position: absolute !important;
+    inset: 0;
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+@theme {
+  --breakpoint-tablet: 900px;
 }

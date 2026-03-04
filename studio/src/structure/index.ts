@@ -10,7 +10,6 @@ import pluralize from 'pluralize-esm'
 
 const DISABLED_TYPES = [
   'settings',
-  'homePage',
   'aboutPage',
   'contactModule',
   'assist.instruction.context',
@@ -20,11 +19,6 @@ export const structure: StructureResolver = (S: StructureBuilder) =>
   S.list()
     .title('Website Content')
     .items([
-      // Home Page Singleton
-      S.listItem()
-        .title('Home Page')
-        .child(S.document().schemaType('homePage').documentId('homePage'))
-        .icon(HomeIcon),
       // About Page Singleton
       S.listItem()
         .title('About Page')

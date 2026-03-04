@@ -10,7 +10,7 @@ type BuilderProps = {
   documentId: string
   documentType: string
   builderField: string
-  blocks: AnyBuilderBlock[]
+  blocks: AnyBuilderBlock[],
 }
 
 type BuilderDocument = {

@@ -7,7 +7,7 @@ import {defineQuery} from 'next-sanity'
 
 // Resolves a Sanity file asset to a usable URL
 const videoFragment = /* groq */ `{
-  "url": asset->url
+   "url": asset->url
 }`
 
 // Resolves a Sanity image asset with hotspot/crop metadata
@@ -35,7 +35,8 @@ const pageBuilderFragment = /* groq */ `[]{
   _type,
   _key,
   _type == "video" => {
-    "url": vimeoUrl
+    "url": vimeoUrl,
+     title
   },
   _type == "projectHero" => {
     backgroundColor,
@@ -49,6 +50,7 @@ const pageBuilderFragment = /* groq */ `[]{
     }
   },
   _type == "gallery" => {
+  backgroundColor,
   items[]{
     _key,
     type,
@@ -244,7 +246,8 @@ export const aboutPageQuery = defineQuery(`
         }
       },
       _type == "video" => {
-        "url": vimeoUrl
+        "url": vimeoUrl,
+            title
       },
     }
   }

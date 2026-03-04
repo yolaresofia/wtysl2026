@@ -86,6 +86,7 @@ export type CampaignSection = {
 
 export type Gallery = {
   _type: 'gallery'
+  backgroundColor?: '#FCC554' | '#373B45' | '#000000' | '#707E69' | '#18181B' | '#8C7E79'
   items?: Array<
     {
       _key: string
@@ -133,6 +134,7 @@ export type ProjectHero = {
 
 export type Video = {
   _type: 'video'
+  title?: string
   vimeoUrl?: string
 }
 

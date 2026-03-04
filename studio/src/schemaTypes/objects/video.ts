@@ -8,6 +8,11 @@ export const video = defineType({
   icon: VideoIcon,
   fields: [
     defineField({
+      name: 'title',
+      title: 'Video title',
+      type: 'string',
+    }),
+    defineField({
       name: 'vimeoUrl',
       title: 'Vimeo URL',
       type: 'string',

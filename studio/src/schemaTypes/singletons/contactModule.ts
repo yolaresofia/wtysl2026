@@ -27,6 +27,10 @@ export const contactModule = defineType({
       group: 'content',
       description: 'Shown on the /contact page. All other pages use the background color below.',
       options: {accept: 'video/*'},
+      hidden: ({document}) => {
+        const color = document?.backgroundColor as string | undefined
+        return !!color && color !== '#000000'
+      },
     }),
     defineField({
       name: 'backgroundColor',
@@ -43,7 +47,7 @@ export const contactModule = defineType({
         layout: 'radio',
       },
       initialValue: '#000000',
-      validation: (Rule) => Rule.required().error('Please select a background color.'),
+      hidden: ({document}) => !!(document?.backgroundVideo as {asset?: unknown} | undefined)?.asset,
     }),
     defineField({
       name: 'centerText',

@@ -402,6 +402,39 @@
             "value": "gallery"
           }
         },
+        "backgroundColor": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "union",
+            "of": [
+              {
+                "type": "string",
+                "value": "#FCC554"
+              },
+              {
+                "type": "string",
+                "value": "#373B45"
+              },
+              {
+                "type": "string",
+                "value": "#000000"
+              },
+              {
+                "type": "string",
+                "value": "#707E69"
+              },
+              {
+                "type": "string",
+                "value": "#18181B"
+              },
+              {
+                "type": "string",
+                "value": "#8C7E79"
+              }
+            ]
+          },
+          "optional": true
+        },
         "items": {
           "type": "objectAttribute",
           "value": {
@@ -702,6 +735,13 @@
             "type": "string",
             "value": "video"
           }
+        },
+        "title": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "string"
+          },
+          "optional": true
         },
         "vimeoUrl": {
           "type": "objectAttribute",
