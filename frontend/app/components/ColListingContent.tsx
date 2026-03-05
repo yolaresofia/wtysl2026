@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from 'next-view-transitions'
 import {gsap} from 'gsap'
 import {useEffect, useRef, useState} from 'react'
 

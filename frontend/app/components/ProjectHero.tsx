@@ -19,8 +19,8 @@ export default function ProjectHero({
         <p className="text-lg">{about}</p>
       </div>
       <div className="flex pt-50 w-full text-[13px]">
-        <p className="w-2/12 opacity-30">{infoSectionTitle}</p>
-        <div className="flex space-x-30 w-10/12">
+        <p className="w-1/12 opacity-30">{infoSectionTitle}</p>
+        <div className="flex space-x-30 w-11/12 pl-8">
           {infoSection?.items?.map((item) => (
             <div key={item.title}>
               <h4>{item.title}</h4>

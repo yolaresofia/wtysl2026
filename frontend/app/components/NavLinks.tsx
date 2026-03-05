@@ -1,5 +1,5 @@
 'use client'
-import Link from 'next/link'
+import { Link } from 'next-view-transitions'
 import {usePathname} from 'next/navigation'
 
 const links = [
@@ -13,12 +13,12 @@ const links = [
 export default function NavLinks() {
   const pathname = usePathname()
   return (
-    <div className="flex space-x-2 justify-between max-w-4xl col-span-2">
+    <div className="flex gap-3">
       {links.map(({href, label}) => (
         <Link
           key={href}
           href={href}
-          className={`text-xs uppercase cursor-pointer ${pathname.startsWith(href) ? 'text-white' : 'text-white/40'}`}
+          className={`text-xs uppercase cursor-pointer hover:text-white transition-colors ${pathname.startsWith(href) ? 'text-white' : 'text-white/40'}`}
         >
           {label}
         </Link>

@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from 'next-view-transitions'
 import {gsap} from 'gsap'
 import {useEffect, useRef, useState} from 'react'
 
@@ -91,9 +91,9 @@ export const RowsListingContent = ({
       <div className="relative z-10 w-full flex flex-col-reverse gap-20">
         {Object.entries(grouped).map(([category, groupItems]) => (
           <section className="flex w-full text-[13px]" key={category}>
-            <p className="w-2/12 text-white opacity-80">{categoryLabels[category] ?? category}</p>
+            <p className="w-1/12 text-white opacity-80">{categoryLabels[category] ?? category}</p>
             <div
-              className="grid grid-cols-5 gap-8 w-10/12"
+              className="grid grid-cols-5 gap-18 w-11/12 pl-8"
               onMouseLeave={() => {
                 const firstId = items[0]?._id
                 if (firstId) crossfadeTo(firstId)

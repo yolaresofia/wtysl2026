@@ -3,7 +3,7 @@
 import {useEffect, useRef} from 'react'
 import {useRouter} from 'next/navigation'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from 'next-view-transitions'
 import gsap from 'gsap'
 import type {SettingsQueryResult} from '@/sanity.types'
 import NavLinks from './NavLinks'
@@ -12,17 +12,13 @@ type Props = NonNullable<SettingsQueryResult>
 
 export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
   const router = useRouter()
-  const topRef = useRef<HTMLDivElement>(null)
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const topRef = useRef<SVGGElement>(null)
+  const bottomRef = useRef<SVGGElement>(null)
   const welcomeRef = useRef<HTMLParagraphElement>(null)
   const headerRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    if (localStorage.getItem('wtysl-intro-seen')) {
-      router.replace('/documentaries')
-      return
-    }
 
     const ctx = gsap.context(() => {
       gsap.set(welcomeRef.current, {autoAlpha: 0})
@@ -49,6 +45,15 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
           duration: 0.8,
           ease: 'power2.out',
         }, '<')
+        .to([welcomeRef.current, headerRef.current], {
+          autoAlpha: 0,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          delay: 3,
+          onComplete: () => {
+            router.replace('/documentaries')
+          },
+        })
     })
 
     return () => ctx.revert()
@@ -56,24 +61,28 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
 
   const logoUrl = logo?.asset?.url
 
-  // The mask is applied to a full-viewport inner div inside each clipping wrapper.
-  // Both inner divs are identical and absolutely positioned, so the mask renders
-  // as if it's one single full-screen element — the clip just reveals each half.
-  const innerStyle: React.CSSProperties = {
-    position: 'absolute',
-    inset: 0,
-    top: '-50vh', // shift up inside bottom wrapper so mask aligns with full viewport
-    height: '100vh',
-    backgroundColor: '#FCC554',
-    ...(logoUrl ? {
-      maskImage: `url(${logoUrl}), linear-gradient(black, black)`,
-      maskRepeat: 'no-repeat, no-repeat',
-      maskPosition: 'center center, center center',
-      maskSize: '300px, 100%',
-      WebkitMaskComposite: 'xor' as React.CSSProperties['WebkitMaskComposite'],
-      maskComposite: 'exclude' as React.CSSProperties['maskComposite'],
-    } : {}),
-  }
+  // Logo paths for the inline SVG mask. Using SVG <mask> instead of CSS mask-image
+  // keeps everything vector — CSS mask-image rasterizes even data URIs.
+  const logoPaths = <>
+    <path d="M147.087 162.248C120.497 162.248 97.3671 180.591 94.8408 207.47C95.7895 208.492 96.8275 209.663 97.8923 210.957C101.669 215.554 109.63 227.18 118.399 227.451C127.17 227.721 130.271 224.071 130.271 224.071C130.271 224.071 134.993 221.097 137.287 212.038C139.581 202.98 143.358 193.652 144.033 192.976C144.033 192.976 141.605 185.811 145.112 184.187C145.112 184.187 146.192 184.119 147.878 185.877C147.878 185.877 155.096 184.594 161.167 187.499C161.167 187.499 171.556 188.108 179.381 191.082L184.103 191.014C184.103 191.014 187.005 190.946 188.623 194.664C188.623 194.664 192.874 196.692 194.425 201.626C195.975 206.56 189.297 204.736 189.297 204.736C189.297 204.736 191.929 208.927 189.837 210.279C187.744 211.63 186.665 210.549 186.665 210.549C186.665 210.549 183.832 206.899 180.527 207.778C177.221 208.657 168.587 211.63 168.587 211.63C168.587 211.63 165.415 212.239 162.516 217.039C162.516 217.039 154.421 234.682 152.195 237.723C149.968 240.765 139.445 256.177 130.135 259.219C129.708 259.359 129.262 259.487 128.797 259.606C134.537 261.589 140.712 262.654 147.085 262.654C175.265 262.654 199.563 241.911 199.563 212.377C199.563 182.843 175.265 162.244 147.085 162.244L147.087 162.248Z" />
+    <path d="M0 163.401H28.7555L50.8969 203.306L72.8954 163.401H100.357L63.5497 226.787V261.362H37.3812V227.508L0 163.401Z" />
+    <path d="M210.778 223.475V163.401H236.947V223.186C236.947 234.279 242.123 240.618 253.194 240.618C264.266 240.618 269.442 234.279 269.442 223.186V163.401H295.61V223.475C295.61 249.838 277.639 262.803 253.196 262.803C228.753 262.803 210.782 249.838 210.782 223.475H210.778Z" />
+    <path d="M31.6234 74.7275C31.3054 75.4686 30.6712 75.4686 30.3549 74.7275L0.214844 1.8281H20.4142L33.8442 35.6282L49.2841 0.451393C49.4949 -0.0785241 49.9183 -0.0785241 50.1309 0.451393L66.3104 35.63L79.1061 1.8281H98.3533L68.6366 74.7275C68.3186 75.5743 67.7897 75.5743 67.3681 74.7275L49.3895 36.0525L31.6234 74.7275Z" />
+    <path d="M149.218 1.82788H168.465V73.8787H149.218V50.992H124.261V73.8787H105.014V1.82788H124.261V34.7812H149.218V1.82788Z" />
+    <path d="M193.951 73.8787H175.127L210.13 0.556852C210.448 -0.184315 211.082 -0.184315 211.399 0.556852L246.297 73.8805H226.415L223.666 67.7345C223.771 67.7345 196.593 67.7345 196.593 67.7345L193.949 73.8805L193.951 73.8787ZM209.919 36.5822L202.728 53.323H217.321L209.919 36.5822Z" />
+    <path d="M257.614 18.0387H238.579V1.82788H295.897V18.0387H276.861V73.8787H257.614V18.0387Z" />
+    <path d="M19.5101 98.6989H0.212891V82.2643H58.3206V98.6989H39.0234V155.307H19.5118V98.6989H19.5101Z" />
+    <path d="M59.8213 118.787C59.8213 96.7672 77.9393 81.4067 98.9516 81.4067C119.964 81.4067 138.082 96.7672 138.082 118.787C138.082 140.808 119.964 156.275 98.9516 156.275C77.9393 156.275 59.8213 140.808 59.8213 118.787ZM118.143 118.787C118.143 107.294 111.176 98.3784 98.9534 98.3784C86.7312 98.3784 79.7634 107.294 79.7634 118.787C79.7634 130.281 86.7312 139.304 98.9534 139.304C111.176 139.304 118.143 130.281 118.143 118.787Z" />
+    <path d="M143.658 118.787C143.658 96.7672 161.776 81.4067 182.789 81.4067C203.801 81.4067 221.919 96.7672 221.919 118.787C221.919 140.808 203.801 156.275 182.789 156.275C161.776 156.275 143.658 140.808 143.658 118.787ZM201.98 118.787C201.98 107.294 195.012 98.3784 182.79 98.3784C170.568 98.3784 163.6 107.294 163.6 118.787C163.6 130.281 170.568 139.304 182.79 139.304C195.012 139.304 201.98 130.281 201.98 118.787Z" />
+    <path d="M272.951 82.2643H294.607C294.607 82.2643 265.875 123.297 265.767 123.297L296 155.307H270.699L250.544 133.287V155.307H231.032V82.2643H250.544V115.563L272.95 82.2643H272.951Z" />
+    <path d="M0.557617 304.627L8.8189 298.418C10.8842 300.989 13.4498 303.059 17.7055 303.059C21.0858 303.059 23.0885 302.056 23.0885 299.673C23.0885 297.854 21.7111 296.977 18.8954 296.036L13.8893 294.342C7.69333 292.272 3.31257 288.509 3.31257 281.488C3.31257 273.084 10.2589 268.759 17.8323 268.759C25.4058 268.759 29.4739 271.455 31.9769 274.402L25.4683 281.237C23.7156 279.418 21.8379 278.165 18.4594 278.165C15.7063 278.165 14.3288 279.418 14.3288 281.112C14.3288 282.806 15.2668 283.557 17.3321 284.247L22.9653 286.128C31.4767 288.95 34.3567 293.026 34.3567 299.045C34.3567 306.883 29.4757 312.527 18.2093 312.527C8.63309 312.527 3.18929 308.138 0.559404 304.627H0.557617Z" />
+    <path d="M37.7939 290.582C37.7939 277.728 48.3707 268.761 60.6375 268.761C72.9044 268.761 83.4811 277.728 83.4811 290.582C83.4811 303.437 72.9044 312.467 60.6375 312.467C48.3707 312.467 37.7939 303.437 37.7939 290.582ZM71.8413 290.582C71.8413 283.873 67.7732 278.668 60.6375 278.668C53.5018 278.668 49.4337 283.873 49.4337 290.582C49.4337 297.292 53.5018 302.559 60.6375 302.559C67.7732 302.559 71.8413 297.292 71.8413 290.582Z" />
+    <path d="M94.3115 269.262H105.703V302.309H123.791V311.903H94.3115V269.262Z" />
+    <path d="M126.044 290.582C126.044 277.728 136.621 268.761 148.888 268.761C161.154 268.761 171.731 277.728 171.731 290.582C171.731 303.437 161.154 312.467 148.888 312.467C136.621 312.467 126.044 303.437 126.044 290.582ZM160.091 290.582C160.091 283.873 156.023 278.668 148.888 278.668C141.752 278.668 137.684 283.873 137.684 290.582C137.684 297.292 141.752 302.559 148.888 302.559C156.023 302.559 160.091 297.292 160.091 290.582Z" />
+    <path d="M187.753 290.645V311.903H177.051V268.698C177.051 268.322 177.238 268.009 177.926 268.573L204.65 290.645V269.262H215.352V312.529C215.352 313.031 215.165 313.218 214.477 312.655L187.753 290.645Z" />
+    <path d="M243.641 297.541V288.762H263.732C263.732 289.012 263.794 289.702 263.794 290.581C263.794 305.128 255.471 312.527 242.891 312.527C230.312 312.527 220.673 303.435 220.673 290.581C220.673 277.727 230.687 268.759 242.704 268.759C250.902 268.759 257.411 272.397 260.729 278.353L251.653 283.871C250.025 280.987 247.272 278.666 242.516 278.666C235.757 278.666 232.314 283.871 232.314 290.581C232.314 297.291 235.945 302.62 242.954 302.62C248.149 302.62 250.527 300.739 251.84 297.541H243.641Z" />
+    <path d="M275.093 287.004H279.622C283.049 287.004 284.641 285.409 284.641 282.772C284.641 280.319 282.927 278.908 280.356 278.908C277.601 278.908 275.949 280.258 274.725 282.526L266.096 277.804C268.238 273.326 273.256 269.708 280.846 269.708C289.904 269.708 295.841 274.676 295.841 281.667C295.841 288.658 292.536 292.584 285.375 293.993V297.795H275.091V287.002L275.093 287.004ZM274.051 306.505C274.051 302.948 276.928 300.495 280.172 300.495C283.417 300.495 286.293 302.948 286.293 306.505C286.293 310.062 283.356 312.515 280.172 312.515C276.989 312.515 274.051 310.062 274.051 306.505Z" />
+  </>
 
   return (
     <div className="absolute inset-0 overflow-hidden">
@@ -88,38 +97,64 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
         />
       )}
 
-      {/* Top clipping wrapper — shows top half, slides up */}
-      <div
-        ref={topRef}
-        style={{position: 'absolute', inset: 0, bottom: '50%', overflow: 'hidden'}}
+      {/*
+        Full-viewport SVG with an inline <mask>.
+        The mask fills white (show) everywhere, then paints the logo black (cut out).
+        Two <rect> halves are animated separately: top slides up, bottom slides down.
+        Using SVG mask keeps all edges vector — no rasterization.
+      */}
+      <svg
+        className="absolute inset-0 w-full h-full overflow-visible pointer-events-none"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <div style={{...innerStyle, top: 0}} />
-      </div>
+        <defs>
+          {/* maskUnits="userSpaceOnUse" so coordinates match the viewport */}
+          <mask id="wtysl-logo-mask" maskUnits="userSpaceOnUse">
+            {/* White = show the colored rect */}
+            <rect width="100%" height="100%" fill="white" />
+            {/* Logo paths in black = punch holes. Centered via translate. */}
+            {/* Logo is 296×313; center offset = 50%vw-148, 50%vh-156.5 */}
+            <g style={{transform: 'translate(calc(50vw - 148px), calc(50vh - 156.5px))'}}>
+              {logoPaths}
+            </g>
+          </mask>
+        </defs>
 
-      {/* Bottom clipping wrapper — shows bottom half, slides down */}
-      <div
-        ref={bottomRef}
-        style={{position: 'absolute', inset: 0, top: '50%', overflow: 'hidden'}}
-      >
-        <div style={{...innerStyle, top: '-50vh'}} />
-      </div>
+        {/* Top half rect — clips to top 50%, slides up via ref on <g> */}
+        <g ref={topRef}>
+          <rect
+            x="0" y="0" width="100%" height="50%"
+            fill="#FCC554"
+            mask="url(#wtysl-logo-mask)"
+          />
+        </g>
+
+        {/* Bottom half rect — clips to bottom 50%, slides down via ref on <g> */}
+        <g ref={bottomRef}>
+          <rect
+            x="0" y="50%" width="100%" height="50%"
+            fill="#FCC554"
+            mask="url(#wtysl-logo-mask)"
+          />
+        </g>
+      </svg>
 
       <header
         ref={headerRef}
         className="fixed z-50 inset-x-0 top-0 p-9 lg:block hidden opacity-0 invisible"
       >
-        <div className="flex items-center">
-          <div className="flex-1">
+        <div className="grid grid-cols-3 items-start">
+          <div>
             {logoUrl && (
               <Link href="/documentaries">
-                <Image src={logoUrl} alt="Logo" width={100} height={100} className="h-12 w-auto mr-8" />
+                <Image src={logoUrl} alt="Logo" width={100} height={100} className="h-12 w-auto" />
               </Link>
             )}
           </div>
-          <div className="flex-1">
+          <div className="flex justify-center">
             <NavLinks />
           </div>
-          <div className="flex-1" />
+          <div />
         </div>
       </header>
 

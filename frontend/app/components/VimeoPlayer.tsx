@@ -13,6 +13,8 @@ export default function VimeoPlayer({url, title}: Props) {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [shareState, setShareState] = useState<'share' | 'copied'>('share')
+  const isPlayingRef = useRef(false)
+  const wrapperRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<Player | null>(null)
 
@@ -29,7 +31,7 @@ export default function VimeoPlayer({url, title}: Props) {
   }
   const togglePlay = () => {
     if (!playerRef.current) return
-    if (isPlaying) {
+    if (isPlayingRef.current) {
       playerRef.current.pause()
     } else {
       playerRef.current.play()
@@ -43,8 +45,12 @@ export default function VimeoPlayer({url, title}: Props) {
   }
 
   const handleFullscreen = () => {
-    if (!playerRef.current) return
-    playerRef.current.requestFullscreen()
+    if (!wrapperRef.current) return
+    if (document.fullscreenElement) {
+      document.exitFullscreen()
+    } else {
+      wrapperRef.current.requestFullscreen()
+    }
   }
 
   useEffect(() => {
@@ -58,8 +64,8 @@ export default function VimeoPlayer({url, title}: Props) {
     })
     playerRef.current = player
     let destroyed = false
-    player.on('play', () => setIsPlaying(true))
-    player.on('pause', () => setIsPlaying(false))
+    player.on('play', () => { isPlayingRef.current = true; setIsPlaying(true) })
+    player.on('pause', () => { isPlayingRef.current = false; setIsPlaying(false) })
     player.on('timeupdate', (data) => setCurrentTime(data.seconds))
     player.getDuration().then((d) => {
       if (!destroyed) setDuration(d)
@@ -72,7 +78,7 @@ export default function VimeoPlayer({url, title}: Props) {
   }, [])
 
   return (
-    <div className="relative w-screen h-screen bg-black overflow-hidden">
+    <div ref={wrapperRef} className="relative w-screen h-screen bg-black overflow-hidden">
       <div ref={containerRef} className="vimeo-container w-full h-full" />
       <div className="absolute bottom-0 left-0 right-0 flex items-center gap-4 px-6 py-4 text-white text-sm">
         {title && <span className="mr-auto font-semibold">{title}</span>}

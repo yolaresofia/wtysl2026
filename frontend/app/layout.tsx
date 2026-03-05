@@ -5,6 +5,7 @@ import type {Metadata} from 'next'
 import {draftMode} from 'next/headers'
 import {VisualEditing} from 'next-sanity/visual-editing'
 import {Toaster} from 'sonner'
+import {ViewTransitions} from 'next-view-transitions'
 
 import DraftModeToast from '@/app/components/DraftModeToast'
 import {sanityFetch, SanityLive} from '@/sanity/lib/live'
@@ -45,27 +46,29 @@ export default async function RootLayout({children}: {children: React.ReactNode}
   const {isEnabled: isDraftMode} = await draftMode()
 
   return (
-    <html lang="en" className={`font-neue text-black`}>
-      <body>
-        {/* The <Toaster> component is responsible for rendering toast notifications used in /app/client-utils.ts and /app/components/DraftModeToast.tsx */}
-        <Toaster />
-        <section className="min-h-screen">
-          {isDraftMode && (
-            <>
-              <DraftModeToast />
-              {/*  Enable Visual Editing, only to be rendered when Draft Mode is enabled */}
-              <VisualEditing />
-            </>
-          )}
-          {/* The <SanityLive> component is responsible for making all sanityFetch calls in your application live, so should always be rendered. */}
-          <SanityLive onError={handleError} />
-          <HeaderWrapper>
-            <Header />
-          </HeaderWrapper>
-          <main className="">{children}</main>
-        </section>
-        <SpeedInsights />
-      </body>
-    </html>
+    <ViewTransitions>
+      <html lang="en" className={`font-neue text-black`}>
+        <body>
+          {/* The <Toaster> component is responsible for rendering toast notifications used in /app/client-utils.ts and /app/components/DraftModeToast.tsx */}
+          <Toaster />
+          <section className="min-h-screen">
+            {isDraftMode && (
+              <>
+                <DraftModeToast />
+                {/*  Enable Visual Editing, only to be rendered when Draft Mode is enabled */}
+                <VisualEditing />
+              </>
+            )}
+            {/* The <SanityLive> component is responsible for making all sanityFetch calls in your application live, so should always be rendered. */}
+            <SanityLive onError={handleError} />
+            <HeaderWrapper>
+              <Header />
+            </HeaderWrapper>
+            <main className="">{children}</main>
+          </section>
+          <SpeedInsights />
+        </body>
+      </html>
+    </ViewTransitions>
   )
 }
