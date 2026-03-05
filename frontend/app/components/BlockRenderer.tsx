@@ -5,18 +5,21 @@ import type {
   AnimationBuilderBlock,
   CampaignBuilderBlock,
   AboutBuilderBlock,
+  ContactBuilderBlock,
 } from '@/sanity/lib/types'
 import Gallery from './Gallery'
 import PhotoInfoGallery from './PhotoInfoGallery'
 import ProjectHero from './ProjectHero'
 import TextWithBackgroundColor from './TextWithBackgroundColor'
 import Video from './Video'
+import {ContactHero} from './ContactHero'
 
 export type AnyBuilderBlock =
 | DocumentaryBuilderBlock
 | AnimationBuilderBlock
 | CampaignBuilderBlock
 | AboutBuilderBlock
+| ContactBuilderBlock
 
 type BlockProps = {
   index: number
@@ -32,7 +35,8 @@ const Blocks: Record<string, React.FC<any>> = {
   photoInfoGallery: PhotoInfoGallery,
   projectHero: ProjectHero,
   textWithBackgroundColor: TextWithBackgroundColor,
-  video: Video
+  video: Video,
+  contactBlock: ContactHero,
 }
 
 export default function BlockRenderer({block, index, documentId, documentType, builderField}: BlockProps) {

@@ -101,7 +101,7 @@ export const documentaries = defineType({
       type: 'array',
       group: 'page',
       description: 'Build the detail page by adding and reordering sections below.',
-      of: [{type: 'video'}, {type: 'projectHero'}, {type: 'gallery'}],
+      of: [{type: 'video'}, {type: 'projectHero'}, {type: 'gallery'}, {type: 'contactBlock'}],
       options: {
         insertMenu: {
           views: [

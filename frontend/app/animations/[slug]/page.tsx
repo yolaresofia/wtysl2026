@@ -3,8 +3,7 @@ import {notFound} from 'next/navigation'
 import {sanityFetch} from '@/sanity/lib/live'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import ProjectBuilder from '@/app/components/PageBuilder'
-import {animationBySlugQuery, animationSlugsQuery, contactModuleQuery} from '@/sanity/lib/queries'
-import { ContactHero } from '@/app/contact/components/ContactHero'
+import {animationBySlugQuery, animationSlugsQuery} from '@/sanity/lib/queries'
 
 type Props = {
   params: Promise<{slug: string}>
@@ -50,8 +49,8 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
 
 export default async function AnimationPage(props: Props) {
   const params = await props.params
-  const [{data: animation}, {data: contact}] = await Promise.all([
-    sanityFetch({query: animationBySlugQuery, params}), sanityFetch({query: contactModuleQuery}),
+  const [{data: animation}] = await Promise.all([
+    sanityFetch({query: animationBySlugQuery, params}),
   ])
   if (!animation?._id) {
     return notFound()
@@ -60,7 +59,6 @@ export default async function AnimationPage(props: Props) {
   return (
     <>
       <ProjectBuilder documentId={animation._id} documentType="animations" builderField="animationBuilder" blocks={animation.animationBuilder ?? []} />
-      {contact && <ContactHero {...contact} />}
     </>
   )
 }

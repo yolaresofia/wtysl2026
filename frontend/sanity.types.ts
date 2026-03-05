@@ -22,6 +22,29 @@ export type InfoSection = {
   >
 }
 
+export type SanityFileAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset'
+}
+
+export type ContactBlock = {
+  _type: 'contactBlock'
+  backgroundType?: 'video' | 'color'
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+  backgroundColor: '#FCC554' | '#373B45' | '#000000' | '#707E69' | '#18181B' | '#8C7E79'
+  centerText: string
+  hoverCenterText: string
+  firstColumn?: BlockContent
+  secondColumn?: BlockContent
+  thirdColumn?: BlockContent
+}
+
 export type SanityImageAssetReference = {
   _ref: string
   _type: 'reference'
@@ -65,13 +88,6 @@ export type CampaignReference = {
   _type: 'reference'
   _weak?: boolean
   [internalGroqTypeReferenceTo]?: 'campaign'
-}
-
-export type SanityFileAssetReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset'
 }
 
 export type CampaignSection = {
@@ -226,6 +242,52 @@ export type BlockContent = Array<
     }
 >
 
+export type Contact = {
+  _id: string
+  _type: 'contact'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: string
+  slug: Slug
+  seoTitle?: string
+  seoDescription?: string
+  ogImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  contactBuilder?: Array<
+    {
+      _key: string
+    } & ContactBlock
+  >
+}
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top: number
+  bottom: number
+  left: number
+  right: number
+}
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x: number
+  y: number
+  height: number
+  width: number
+}
+
+export type Slug = {
+  _type: 'slug'
+  current: string
+  source?: string
+}
+
 export type Animation = {
   _id: string
   _type: 'animation'
@@ -260,29 +322,10 @@ export type Animation = {
     | ({
         _key: string
       } & Gallery)
+    | ({
+        _key: string
+      } & ContactBlock)
   >
-}
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top: number
-  bottom: number
-  left: number
-  right: number
-}
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x: number
-  y: number
-  height: number
-  width: number
-}
-
-export type Slug = {
-  _type: 'slug'
-  current: string
-  source?: string
 }
 
 export type Campaign = {
@@ -317,35 +360,10 @@ export type Campaign = {
     | ({
         _key: string
       } & Gallery)
+    | ({
+        _key: string
+      } & ContactBlock)
   >
-}
-
-export type ContactModule = {
-  _id: string
-  _type: 'contactModule'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  backgroundVideo?: {
-    asset?: SanityFileAssetReference
-    media?: unknown
-    _type: 'file'
-  }
-  backgroundColor?: '#FCC554' | '#373B45' | '#000000'
-  centerText: string
-  hoverCenterText: string
-  firstColumn?: BlockContent
-  secondColumn?: BlockContent
-  thirdColumn?: BlockContent
-  seoTitle?: string
-  seoDescription?: string
-  ogImage?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    _type: 'image'
-  }
 }
 
 export type AboutPage = {
@@ -373,6 +391,9 @@ export type AboutPage = {
     | ({
         _key: string
       } & PhotoInfoGallery)
+    | ({
+        _key: string
+      } & ContactBlock)
   >
 }
 
@@ -410,6 +431,9 @@ export type Documentaries = {
     | ({
         _key: string
       } & Gallery)
+    | ({
+        _key: string
+      } & ContactBlock)
   >
 }
 
@@ -681,12 +705,13 @@ export type Geopoint = {
 
 export type AllSanitySchemaTypes =
   | InfoSection
+  | SanityFileAssetReference
+  | ContactBlock
   | SanityImageAssetReference
   | PhotoInfoGalleryItem
   | PhotoInfoGallery
   | TextWithBackgroundColor
   | CampaignReference
-  | SanityFileAssetReference
   | CampaignSection
   | Gallery
   | GalleryItem
@@ -699,12 +724,12 @@ export type AllSanitySchemaTypes =
   | Link
   | BlockContentTextOnly
   | BlockContent
-  | Animation
+  | Contact
   | SanityImageCrop
   | SanityImageHotspot
   | Slug
+  | Animation
   | Campaign
-  | ContactModule
   | AboutPage
   | Documentaries
   | Settings
@@ -803,150 +828,10 @@ export type SettingsQueryResult = {
 } | null
 
 // Source: sanity/lib/queries.ts
-// Variable: contactModuleQuery
-// Query: *[_type == "contactModule"][0] {    backgroundVideo {   "url": asset->url},    backgroundColor,    centerText,    hoverCenterText,    firstColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    secondColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    thirdColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    seoTitle,    seoDescription,    ogImage {  ...,  asset->}  }
-export type ContactModuleQueryResult = {
-  backgroundVideo: {
-    url: string | null
-  } | null
-  backgroundColor: '#000000' | '#373B45' | '#FCC554' | null
-  centerText: string
-  hoverCenterText: string
-  firstColumn: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
-        listItem?: 'bullet' | 'number'
-        markDefs: Array<
-          | {
-              linkType?: 'documentaries' | 'email' | 'href'
-              href?: string
-              email?: string
-              documentaries?: DocumentariesReference
-              openInNewTab?: boolean
-              _type: 'link'
-              _key: string
-              slug: string | null
-            }
-          | {
-              linkType?: 'documentaries' | 'email' | 'href'
-              href?: string
-              email?: string
-              documentaries?: DocumentariesReference
-              openInNewTab?: boolean
-              _type: 'link'
-              _key: string
-            }
-        > | null
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | {
-        asset?: SanityImageAssetReference
-        media?: unknown
-        hotspot?: SanityImageHotspot
-        crop?: SanityImageCrop
-        _type: 'image'
-        _key: string
-        markDefs: null
-      }
-  > | null
-  secondColumn: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
-        listItem?: 'bullet' | 'number'
-        markDefs: Array<
-          | {
-              linkType?: 'documentaries' | 'email' | 'href'
-              href?: string
-              email?: string
-              documentaries?: DocumentariesReference
-              openInNewTab?: boolean
-              _type: 'link'
-              _key: string
-              slug: string | null
-            }
-          | {
-              linkType?: 'documentaries' | 'email' | 'href'
-              href?: string
-              email?: string
-              documentaries?: DocumentariesReference
-              openInNewTab?: boolean
-              _type: 'link'
-              _key: string
-            }
-        > | null
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | {
-        asset?: SanityImageAssetReference
-        media?: unknown
-        hotspot?: SanityImageHotspot
-        crop?: SanityImageCrop
-        _type: 'image'
-        _key: string
-        markDefs: null
-      }
-  > | null
-  thirdColumn: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>
-          text?: string
-          _type: 'span'
-          _key: string
-        }>
-        style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
-        listItem?: 'bullet' | 'number'
-        markDefs: Array<
-          | {
-              linkType?: 'documentaries' | 'email' | 'href'
-              href?: string
-              email?: string
-              documentaries?: DocumentariesReference
-              openInNewTab?: boolean
-              _type: 'link'
-              _key: string
-              slug: string | null
-            }
-          | {
-              linkType?: 'documentaries' | 'email' | 'href'
-              href?: string
-              email?: string
-              documentaries?: DocumentariesReference
-              openInNewTab?: boolean
-              _type: 'link'
-              _key: string
-            }
-        > | null
-        level?: number
-        _type: 'block'
-        _key: string
-      }
-    | {
-        asset?: SanityImageAssetReference
-        media?: unknown
-        hotspot?: SanityImageHotspot
-        crop?: SanityImageCrop
-        _type: 'image'
-        _key: string
-        markDefs: null
-      }
-  > | null
+// Variable: contactPageQuery
+// Query: *[_type == "contact" && _id == "contact"][0] {    _id,    seoTitle,    seoDescription,    ogImage {  ...,  asset->},    contactBuilder []{  _type,  _key,  _type == "video" => {    "url": vimeoUrl,     title  },  _type == "projectHero" => {    backgroundColor,    title,    subtitle,    about,    infoSectionTitle,    infoSection {      title,      items[]{ title, text }    }  },  _type == "gallery" => {    backgroundColor,    items[]{      _key,      type,      "imageUrl": select(type == "photo" => image.asset->url),      "photoAltText": select(type == "photo" => photoAltText),      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),      "videoAltText": select(type == "video" => videoAltText),      "vimeoUrl": select(type == "video" => vimeoUrl)    }  },  _type == "textWithBackgroundColor" => {    backgroundColor,    about []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  },  _type == "photoInfoGallery" => {    backgroundColor,    title,    items[]{      _key,      name,      role,      location,      image {  ...,  asset->}    }  },  _type == "contactBlock" => {    backgroundType,    backgroundVideo {   "url": asset->url},    backgroundColor,    centerText,    hoverCenterText,    firstColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    secondColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    thirdColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  }}  }
+export type ContactPageQueryResult = {
+  _id: 'contact'
   seoTitle: string | null
   seoDescription: string | null
   ogImage: {
@@ -977,6 +862,152 @@ export type ContactModuleQueryResult = {
     crop?: SanityImageCrop
     _type: 'image'
   } | null
+  contactBuilder: Array<{
+    _type: 'contactBlock'
+    _key: string
+    backgroundType: 'color' | 'video' | null
+    backgroundVideo: {
+      url: string | null
+    } | null
+    backgroundColor: '#000000' | '#18181B' | '#373B45' | '#707E69' | '#8C7E79' | '#FCC554'
+    centerText: string
+    hoverCenterText: string
+    firstColumn: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs: Array<
+            | {
+                linkType?: 'documentaries' | 'email' | 'href'
+                href?: string
+                email?: string
+                documentaries?: DocumentariesReference
+                openInNewTab?: boolean
+                _type: 'link'
+                _key: string
+                slug: string | null
+              }
+            | {
+                linkType?: 'documentaries' | 'email' | 'href'
+                href?: string
+                email?: string
+                documentaries?: DocumentariesReference
+                openInNewTab?: boolean
+                _type: 'link'
+                _key: string
+              }
+          > | null
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | {
+          asset?: SanityImageAssetReference
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          _type: 'image'
+          _key: string
+          markDefs: null
+        }
+    > | null
+    secondColumn: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs: Array<
+            | {
+                linkType?: 'documentaries' | 'email' | 'href'
+                href?: string
+                email?: string
+                documentaries?: DocumentariesReference
+                openInNewTab?: boolean
+                _type: 'link'
+                _key: string
+                slug: string | null
+              }
+            | {
+                linkType?: 'documentaries' | 'email' | 'href'
+                href?: string
+                email?: string
+                documentaries?: DocumentariesReference
+                openInNewTab?: boolean
+                _type: 'link'
+                _key: string
+              }
+          > | null
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | {
+          asset?: SanityImageAssetReference
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          _type: 'image'
+          _key: string
+          markDefs: null
+        }
+    > | null
+    thirdColumn: Array<
+      | {
+          children?: Array<{
+            marks?: Array<string>
+            text?: string
+            _type: 'span'
+            _key: string
+          }>
+          style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+          listItem?: 'bullet' | 'number'
+          markDefs: Array<
+            | {
+                linkType?: 'documentaries' | 'email' | 'href'
+                href?: string
+                email?: string
+                documentaries?: DocumentariesReference
+                openInNewTab?: boolean
+                _type: 'link'
+                _key: string
+                slug: string | null
+              }
+            | {
+                linkType?: 'documentaries' | 'email' | 'href'
+                href?: string
+                email?: string
+                documentaries?: DocumentariesReference
+                openInNewTab?: boolean
+                _type: 'link'
+                _key: string
+              }
+          > | null
+          level?: number
+          _type: 'block'
+          _key: string
+        }
+      | {
+          asset?: SanityImageAssetReference
+          media?: unknown
+          hotspot?: SanityImageHotspot
+          crop?: SanityImageCrop
+          _type: 'image'
+          _key: string
+          markDefs: null
+        }
+    > | null
+  }> | null
 } | null
 
 // Source: sanity/lib/queries.ts
@@ -995,7 +1026,7 @@ export type DocumentariesListingQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: documentaryBySlugQuery
-// Query: *[_type == "documentaries" && slug.current == $slug][0] {    _id,    name,    "slug": slug.current,    seoTitle,    seoDescription,    ogImage {  ...,  asset->},    client,    backgroundVideo {   "url": asset->url},    documentariesBuilder []{  _type,  _key,  _type == "video" => {    "url": vimeoUrl,     title  },  _type == "projectHero" => {    backgroundColor,    title,    subtitle,    about,    infoSectionTitle,    infoSection {      title,      items[]{ title, text }    }  },  _type == "gallery" => {  backgroundColor,  items[]{    _key,    type,    "imageUrl": select(type == "photo" => image.asset->url),    "photoAltText": select(type == "photo" => photoAltText),    "thumbnailUrl": select(type == "video" => thumbnail.asset->url),    "videoAltText": select(type == "video" => videoAltText),    "vimeoUrl": select(type == "video" => vimeoUrl)  }}}  }
+// Query: *[_type == "documentaries" && slug.current == $slug][0] {    _id,    name,    "slug": slug.current,    seoTitle,    seoDescription,    ogImage {  ...,  asset->},    client,    backgroundVideo {   "url": asset->url},    documentariesBuilder []{  _type,  _key,  _type == "video" => {    "url": vimeoUrl,     title  },  _type == "projectHero" => {    backgroundColor,    title,    subtitle,    about,    infoSectionTitle,    infoSection {      title,      items[]{ title, text }    }  },  _type == "gallery" => {    backgroundColor,    items[]{      _key,      type,      "imageUrl": select(type == "photo" => image.asset->url),      "photoAltText": select(type == "photo" => photoAltText),      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),      "videoAltText": select(type == "video" => videoAltText),      "vimeoUrl": select(type == "video" => vimeoUrl)    }  },  _type == "textWithBackgroundColor" => {    backgroundColor,    about []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  },  _type == "photoInfoGallery" => {    backgroundColor,    title,    items[]{      _key,      name,      role,      location,      image {  ...,  asset->}    }  },  _type == "contactBlock" => {    backgroundType,    backgroundVideo {   "url": asset->url},    backgroundColor,    centerText,    hoverCenterText,    firstColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    secondColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    thirdColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  }}  }
 export type DocumentaryBySlugQueryResult = {
   _id: string
   name: string
@@ -1035,6 +1066,152 @@ export type DocumentaryBySlugQueryResult = {
     url: string | null
   } | null
   documentariesBuilder: Array<
+    | {
+        _type: 'contactBlock'
+        _key: string
+        backgroundType: 'color' | 'video' | null
+        backgroundVideo: {
+          url: string | null
+        } | null
+        backgroundColor: '#000000' | '#18181B' | '#373B45' | '#707E69' | '#8C7E79' | '#FCC554'
+        centerText: string
+        hoverCenterText: string
+        firstColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+        secondColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+        thirdColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+      }
     | {
         _type: 'gallery'
         _key: string
@@ -1102,7 +1279,7 @@ export type CampaignsListingQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: campaignBySlugQuery
-// Query: *[_type == "campaign" && slug.current == $slug][0] {    _id,    name,    "slug": slug.current,    seoTitle,    seoDescription,    ogImage {  ...,  asset->},    backgroundVideo {   "url": asset->url},    campaignBuilder []{  _type,  _key,  _type == "video" => {    "url": vimeoUrl,     title  },  _type == "projectHero" => {    backgroundColor,    title,    subtitle,    about,    infoSectionTitle,    infoSection {      title,      items[]{ title, text }    }  },  _type == "gallery" => {  backgroundColor,  items[]{    _key,    type,    "imageUrl": select(type == "photo" => image.asset->url),    "photoAltText": select(type == "photo" => photoAltText),    "thumbnailUrl": select(type == "video" => thumbnail.asset->url),    "videoAltText": select(type == "video" => videoAltText),    "vimeoUrl": select(type == "video" => vimeoUrl)  }}}  }
+// Query: *[_type == "campaign" && slug.current == $slug][0] {    _id,    name,    "slug": slug.current,    seoTitle,    seoDescription,    ogImage {  ...,  asset->},    backgroundVideo {   "url": asset->url},    campaignBuilder []{  _type,  _key,  _type == "video" => {    "url": vimeoUrl,     title  },  _type == "projectHero" => {    backgroundColor,    title,    subtitle,    about,    infoSectionTitle,    infoSection {      title,      items[]{ title, text }    }  },  _type == "gallery" => {    backgroundColor,    items[]{      _key,      type,      "imageUrl": select(type == "photo" => image.asset->url),      "photoAltText": select(type == "photo" => photoAltText),      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),      "videoAltText": select(type == "video" => videoAltText),      "vimeoUrl": select(type == "video" => vimeoUrl)    }  },  _type == "textWithBackgroundColor" => {    backgroundColor,    about []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  },  _type == "photoInfoGallery" => {    backgroundColor,    title,    items[]{      _key,      name,      role,      location,      image {  ...,  asset->}    }  },  _type == "contactBlock" => {    backgroundType,    backgroundVideo {   "url": asset->url},    backgroundColor,    centerText,    hoverCenterText,    firstColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    secondColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    thirdColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  }}  }
 export type CampaignBySlugQueryResult = {
   _id: string
   name: string
@@ -1141,6 +1318,152 @@ export type CampaignBySlugQueryResult = {
     url: string | null
   } | null
   campaignBuilder: Array<
+    | {
+        _type: 'contactBlock'
+        _key: string
+        backgroundType: 'color' | 'video' | null
+        backgroundVideo: {
+          url: string | null
+        } | null
+        backgroundColor: '#000000' | '#18181B' | '#373B45' | '#707E69' | '#8C7E79' | '#FCC554'
+        centerText: string
+        hoverCenterText: string
+        firstColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+        secondColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+        thirdColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+      }
     | {
         _type: 'gallery'
         _key: string
@@ -1210,7 +1533,7 @@ export type AnimationsListingQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: animationBySlugQuery
-// Query: *[_type == "animation" && slug.current == $slug][0] {    _id,    name,    "slug": slug.current,    seoTitle,    seoDescription,    ogImage {  ...,  asset->},    client,    backgroundVideo {   "url": asset->url},    animationBuilder []{  _type,  _key,  _type == "video" => {    "url": vimeoUrl,     title  },  _type == "projectHero" => {    backgroundColor,    title,    subtitle,    about,    infoSectionTitle,    infoSection {      title,      items[]{ title, text }    }  },  _type == "gallery" => {  backgroundColor,  items[]{    _key,    type,    "imageUrl": select(type == "photo" => image.asset->url),    "photoAltText": select(type == "photo" => photoAltText),    "thumbnailUrl": select(type == "video" => thumbnail.asset->url),    "videoAltText": select(type == "video" => videoAltText),    "vimeoUrl": select(type == "video" => vimeoUrl)  }}}  }
+// Query: *[_type == "animation" && slug.current == $slug][0] {    _id,    name,    "slug": slug.current,    seoTitle,    seoDescription,    ogImage {  ...,  asset->},    client,    backgroundVideo {   "url": asset->url},    animationBuilder []{  _type,  _key,  _type == "video" => {    "url": vimeoUrl,     title  },  _type == "projectHero" => {    backgroundColor,    title,    subtitle,    about,    infoSectionTitle,    infoSection {      title,      items[]{ title, text }    }  },  _type == "gallery" => {    backgroundColor,    items[]{      _key,      type,      "imageUrl": select(type == "photo" => image.asset->url),      "photoAltText": select(type == "photo" => photoAltText),      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),      "videoAltText": select(type == "video" => videoAltText),      "vimeoUrl": select(type == "video" => vimeoUrl)    }  },  _type == "textWithBackgroundColor" => {    backgroundColor,    about []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  },  _type == "photoInfoGallery" => {    backgroundColor,    title,    items[]{      _key,      name,      role,      location,      image {  ...,  asset->}    }  },  _type == "contactBlock" => {    backgroundType,    backgroundVideo {   "url": asset->url},    backgroundColor,    centerText,    hoverCenterText,    firstColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    secondColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    thirdColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  }}  }
 export type AnimationBySlugQueryResult = {
   _id: string
   name: string
@@ -1250,6 +1573,152 @@ export type AnimationBySlugQueryResult = {
     url: string | null
   } | null
   animationBuilder: Array<
+    | {
+        _type: 'contactBlock'
+        _key: string
+        backgroundType: 'color' | 'video' | null
+        backgroundVideo: {
+          url: string | null
+        } | null
+        backgroundColor: '#000000' | '#18181B' | '#373B45' | '#707E69' | '#8C7E79' | '#FCC554'
+        centerText: string
+        hoverCenterText: string
+        firstColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+        secondColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+        thirdColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+      }
     | {
         _type: 'gallery'
         _key: string
@@ -1305,7 +1774,7 @@ export type AnimationSlugsQueryResult = Array<{
 
 // Source: sanity/lib/queries.ts
 // Variable: aboutPageQuery
-// Query: *[_type == "aboutPage"][0] {    _id,    seoTitle,    seoDescription,    ogImage {  ...,  asset->},    aboutBuilder[]{      _type,      _key,      _type == "textWithBackgroundColor" => {        backgroundColor,        about []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},      },      _type == "photoInfoGallery" => {        backgroundColor,        title,        items[]{          _key,          name,          role,          location,          image {  ...,  asset->}        }      },      _type == "video" => {        "url": vimeoUrl,            title      },    }  }
+// Query: *[_type == "aboutPage"][0] {    _id,    seoTitle,    seoDescription,    ogImage {  ...,  asset->},    aboutBuilder []{  _type,  _key,  _type == "video" => {    "url": vimeoUrl,     title  },  _type == "projectHero" => {    backgroundColor,    title,    subtitle,    about,    infoSectionTitle,    infoSection {      title,      items[]{ title, text }    }  },  _type == "gallery" => {    backgroundColor,    items[]{      _key,      type,      "imageUrl": select(type == "photo" => image.asset->url),      "photoAltText": select(type == "photo" => photoAltText),      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),      "videoAltText": select(type == "video" => videoAltText),      "vimeoUrl": select(type == "video" => vimeoUrl)    }  },  _type == "textWithBackgroundColor" => {    backgroundColor,    about []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  },  _type == "photoInfoGallery" => {    backgroundColor,    title,    items[]{      _key,      name,      role,      location,      image {  ...,  asset->}    }  },  _type == "contactBlock" => {    backgroundType,    backgroundVideo {   "url": asset->url},    backgroundColor,    centerText,    hoverCenterText,    firstColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    secondColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }},    thirdColumn []{  ...,  markDefs[]{    ...,    _type == "link" => {      ...,      linkType == "documentaries" => {        "slug": documentaries->slug.current      }    }  }}  }}  }
 export type AboutPageQueryResult = {
   _id: string
   seoTitle: string | null
@@ -1339,6 +1808,152 @@ export type AboutPageQueryResult = {
     _type: 'image'
   } | null
   aboutBuilder: Array<
+    | {
+        _type: 'contactBlock'
+        _key: string
+        backgroundType: 'color' | 'video' | null
+        backgroundVideo: {
+          url: string | null
+        } | null
+        backgroundColor: '#000000' | '#18181B' | '#373B45' | '#707E69' | '#8C7E79' | '#FCC554'
+        centerText: string
+        hoverCenterText: string
+        firstColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+        secondColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+        thirdColumn: Array<
+          | {
+              children?: Array<{
+                marks?: Array<string>
+                text?: string
+                _type: 'span'
+                _key: string
+              }>
+              style?: 'blockquote' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'normal'
+              listItem?: 'bullet' | 'number'
+              markDefs: Array<
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                    slug: string | null
+                  }
+                | {
+                    linkType?: 'documentaries' | 'email' | 'href'
+                    href?: string
+                    email?: string
+                    documentaries?: DocumentariesReference
+                    openInNewTab?: boolean
+                    _type: 'link'
+                    _key: string
+                  }
+              > | null
+              level?: number
+              _type: 'block'
+              _key: string
+            }
+          | {
+              asset?: SanityImageAssetReference
+              media?: unknown
+              hotspot?: SanityImageHotspot
+              crop?: SanityImageCrop
+              _type: 'image'
+              _key: string
+              markDefs: null
+            }
+        > | null
+      }
     | {
         _type: 'photoInfoGallery'
         _key: string
@@ -1464,17 +2079,17 @@ import '@sanity/client'
 declare module '@sanity/client' {
   interface SanityQueries {
     '\n  *[_type == "settings"][0] {\n    logo {\n  ...,\n  asset->\n},\n    welcomeText,\n    backgroundVideo {\n   "url": asset->url\n},\n    siteTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n}\n  }\n': SettingsQueryResult
-    '\n  *[_type == "contactModule"][0] {\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n}\n  }\n': ContactModuleQueryResult
+    '\n  *[_type == "contact" && _id == "contact"][0] {\n    _id,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    contactBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n     title\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  }\n}\n  }\n': ContactPageQueryResult
     '\n  *[_type == "documentaries"] | order(_createdAt desc) {\n    _id,\n    name,\n    "slug": slug.current,\n    client,\n    category,\n    backgroundVideo {\n   "url": asset->url\n}\n  }\n': DocumentariesListingQueryResult
-    '\n  *[_type == "documentaries" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    client,\n    backgroundVideo {\n   "url": asset->url\n},\n    documentariesBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n     title\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n  backgroundColor,\n  items[]{\n    _key,\n    type,\n    "imageUrl": select(type == "photo" => image.asset->url),\n    "photoAltText": select(type == "photo" => photoAltText),\n    "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n    "videoAltText": select(type == "video" => videoAltText),\n    "vimeoUrl": select(type == "video" => vimeoUrl)\n  }\n}\n}\n  }\n': DocumentaryBySlugQueryResult
+    '\n  *[_type == "documentaries" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    client,\n    backgroundVideo {\n   "url": asset->url\n},\n    documentariesBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n     title\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  }\n}\n  }\n': DocumentaryBySlugQueryResult
     '\n  *[_type == "documentaries" && defined(slug.current)] {\n    "slug": slug.current\n  }\n': DocumentarySlugsQueryResult
     '\n  *[_type == "campaign"] | order(_createdAt desc) {\n    _id,\n    name,\n    "slug": slug.current,\n    backgroundVideo {\n   "url": asset->url\n}\n  }\n': CampaignsListingQueryResult
-    '\n  *[_type == "campaign" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    backgroundVideo {\n   "url": asset->url\n},\n    campaignBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n     title\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n  backgroundColor,\n  items[]{\n    _key,\n    type,\n    "imageUrl": select(type == "photo" => image.asset->url),\n    "photoAltText": select(type == "photo" => photoAltText),\n    "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n    "videoAltText": select(type == "video" => videoAltText),\n    "vimeoUrl": select(type == "video" => vimeoUrl)\n  }\n}\n}\n  }\n': CampaignBySlugQueryResult
+    '\n  *[_type == "campaign" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    backgroundVideo {\n   "url": asset->url\n},\n    campaignBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n     title\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  }\n}\n  }\n': CampaignBySlugQueryResult
     '\n  *[_type == "campaign" && defined(slug.current)] {\n    "slug": slug.current\n  }\n': CampaignSlugsQueryResult
     '\n  *[_type == "animation"] | order(_createdAt desc) {\n    _id,\n    name,\n    "slug": slug.current,\n    client,\n    category,\n    backgroundVideo {\n   "url": asset->url\n}\n  }\n': AnimationsListingQueryResult
-    '\n  *[_type == "animation" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    client,\n    backgroundVideo {\n   "url": asset->url\n},\n    animationBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n     title\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n  backgroundColor,\n  items[]{\n    _key,\n    type,\n    "imageUrl": select(type == "photo" => image.asset->url),\n    "photoAltText": select(type == "photo" => photoAltText),\n    "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n    "videoAltText": select(type == "video" => videoAltText),\n    "vimeoUrl": select(type == "video" => vimeoUrl)\n  }\n}\n}\n  }\n': AnimationBySlugQueryResult
+    '\n  *[_type == "animation" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    client,\n    backgroundVideo {\n   "url": asset->url\n},\n    animationBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n     title\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  }\n}\n  }\n': AnimationBySlugQueryResult
     '\n  *[_type == "animation" && defined(slug.current)] {\n    "slug": slug.current\n  }\n': AnimationSlugsQueryResult
-    '\n  *[_type == "aboutPage"][0] {\n    _id,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    aboutBuilder[]{\n      _type,\n      _key,\n      _type == "textWithBackgroundColor" => {\n        backgroundColor,\n        about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n      },\n      _type == "photoInfoGallery" => {\n        backgroundColor,\n        title,\n        items[]{\n          _key,\n          name,\n          role,\n          location,\n          image {\n  ...,\n  asset->\n}\n        }\n      },\n      _type == "video" => {\n        "url": vimeoUrl,\n            title\n      },\n    }\n  }\n': AboutPageQueryResult
+    '\n  *[_type == "aboutPage"][0] {\n    _id,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    aboutBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n     title\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  }\n}\n  }\n': AboutPageQueryResult
     '\n  *[_type in ["documentaries", "animation", "campaign"] && defined(slug.current)] {\n    "slug": slug.current,\n    _type,\n    _updatedAt\n  }\n': SitemapQueryResult
   }
 }

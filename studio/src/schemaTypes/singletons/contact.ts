@@ -1,14 +1,24 @@
 import {defineField, defineType} from 'sanity'
-import {StackCompactIcon} from '@sanity/icons'
+import {EnvelopeIcon} from '@sanity/icons'
 
-export const campaign = defineType({
-  name: 'campaign',
-  title: 'Campaign',
+/**
+ * Contact — single document controlling everything about the contact section.
+ *
+ * Auto-rendered at the bottom of every page (no per-page editor input needed):
+ *   - /contact              → uses backgroundVideo
+ *   - /about + detail pages → uses backgroundColor
+ *
+ * Also holds SEO metadata for the /contact route.
+ */
+export const contact = defineType({
+  name: 'contact',
+  title: 'Contact',
   type: 'document',
-  icon: StackCompactIcon,
+  icon: EnvelopeIcon,
   groups: [
     {name: 'content', title: 'Content', default: true},
-    {name: 'page', title: 'Page Builder'},
+    {name: 'page', title: 'Page'},
+    {name: 'seo', title: 'SEO'},
   ],
   fields: [
     defineField({
@@ -48,12 +58,14 @@ export const campaign = defineType({
       name: 'seoTitle',
       title: 'SEO Title',
       type: 'string',
+      group: 'seo',
     }),
     defineField({
       name: 'seoDescription',
       title: 'SEO Description',
       type: 'text',
       rows: 3,
+      group: 'seo',
     }),
     defineField({
       name: 'ogImage',
@@ -61,31 +73,22 @@ export const campaign = defineType({
       type: 'image',
       description: 'Displayed on social cards and search engine results.',
       options: {hotspot: true},
+      group: 'seo',
     }),
     defineField({
-      name: 'backgroundVideo',
-      title: 'Listing Card Video',
-      type: 'file',
-      group: 'content',
-      description: 'Short looping video shown on the listing card. Keep under 10 MB for performance.',
-      options: {
-        accept: 'video/*',
-      },
-    }),
-    defineField({
-      name: 'campaignBuilder',
+      name: 'contactBuilder',
       title: 'Page Builder',
       type: 'array',
       group: 'page',
       description: 'Build the detail page by adding and reordering sections below.',
-      of: [{type: 'video'}, {type: 'projectHero'}, {type: 'gallery'}, {type: 'contactBlock'}],
+      of: [{type: 'contactBlock'}],
       options: {
         insertMenu: {
           views: [
             {
               name: 'grid',
               previewImageUrl: (schemaTypeName) =>
-                `/static/project-builder-thumbnails/${schemaTypeName}.webp`,
+                `/static/contact-builder-thumbnails/${schemaTypeName}.webp`,
             },
           ],
         },
@@ -93,8 +96,8 @@ export const campaign = defineType({
     }),
   ],
   preview: {
-    select: {
-      title: 'name',
+    prepare() {
+      return {title: 'Contact'}
     },
   },
 })

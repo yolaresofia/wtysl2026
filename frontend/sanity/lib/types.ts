@@ -3,6 +3,7 @@ import {
   AnimationBySlugQueryResult,
   CampaignBySlugQueryResult,
   AboutPageQueryResult,
+  ContactPageQueryResult,
 } from '@/sanity.types'
 
 // Page builder item types for each content type
@@ -20,6 +21,10 @@ export type CampaignBuilderBlock = NonNullable<
 
 export type AboutBuilderBlock = NonNullable<
   NonNullable<AboutPageQueryResult>['aboutBuilder']
+>[number]
+
+export type ContactBuilderBlock = NonNullable<
+  NonNullable<ContactPageQueryResult>['contactBuilder']
 >[number]
 
 // Helper to narrow to a specific block type within a builder

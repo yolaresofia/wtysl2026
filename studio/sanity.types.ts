@@ -22,6 +22,29 @@ export type InfoSection = {
   >
 }
 
+export type SanityFileAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset'
+}
+
+export type ContactBlock = {
+  _type: 'contactBlock'
+  backgroundType?: 'video' | 'color'
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+  backgroundColor: '#FCC554' | '#373B45' | '#000000' | '#707E69' | '#18181B' | '#8C7E79'
+  centerText: string
+  hoverCenterText: string
+  firstColumn?: BlockContent
+  secondColumn?: BlockContent
+  thirdColumn?: BlockContent
+}
+
 export type SanityImageAssetReference = {
   _ref: string
   _type: 'reference'
@@ -65,13 +88,6 @@ export type CampaignReference = {
   _type: 'reference'
   _weak?: boolean
   [internalGroqTypeReferenceTo]?: 'campaign'
-}
-
-export type SanityFileAssetReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'sanity.fileAsset'
 }
 
 export type CampaignSection = {
@@ -226,6 +242,52 @@ export type BlockContent = Array<
     }
 >
 
+export type Contact = {
+  _id: string
+  _type: 'contact'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  name: string
+  slug: Slug
+  seoTitle?: string
+  seoDescription?: string
+  ogImage?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+  contactBuilder?: Array<
+    {
+      _key: string
+    } & ContactBlock
+  >
+}
+
+export type SanityImageCrop = {
+  _type: 'sanity.imageCrop'
+  top: number
+  bottom: number
+  left: number
+  right: number
+}
+
+export type SanityImageHotspot = {
+  _type: 'sanity.imageHotspot'
+  x: number
+  y: number
+  height: number
+  width: number
+}
+
+export type Slug = {
+  _type: 'slug'
+  current: string
+  source?: string
+}
+
 export type Animation = {
   _id: string
   _type: 'animation'
@@ -260,29 +322,10 @@ export type Animation = {
     | ({
         _key: string
       } & Gallery)
+    | ({
+        _key: string
+      } & ContactBlock)
   >
-}
-
-export type SanityImageCrop = {
-  _type: 'sanity.imageCrop'
-  top: number
-  bottom: number
-  left: number
-  right: number
-}
-
-export type SanityImageHotspot = {
-  _type: 'sanity.imageHotspot'
-  x: number
-  y: number
-  height: number
-  width: number
-}
-
-export type Slug = {
-  _type: 'slug'
-  current: string
-  source?: string
 }
 
 export type Campaign = {
@@ -317,35 +360,10 @@ export type Campaign = {
     | ({
         _key: string
       } & Gallery)
+    | ({
+        _key: string
+      } & ContactBlock)
   >
-}
-
-export type ContactModule = {
-  _id: string
-  _type: 'contactModule'
-  _createdAt: string
-  _updatedAt: string
-  _rev: string
-  backgroundVideo?: {
-    asset?: SanityFileAssetReference
-    media?: unknown
-    _type: 'file'
-  }
-  backgroundColor?: '#FCC554' | '#373B45' | '#000000'
-  centerText: string
-  hoverCenterText: string
-  firstColumn?: BlockContent
-  secondColumn?: BlockContent
-  thirdColumn?: BlockContent
-  seoTitle?: string
-  seoDescription?: string
-  ogImage?: {
-    asset?: SanityImageAssetReference
-    media?: unknown
-    hotspot?: SanityImageHotspot
-    crop?: SanityImageCrop
-    _type: 'image'
-  }
 }
 
 export type AboutPage = {
@@ -373,6 +391,9 @@ export type AboutPage = {
     | ({
         _key: string
       } & PhotoInfoGallery)
+    | ({
+        _key: string
+      } & ContactBlock)
   >
 }
 
@@ -410,6 +431,9 @@ export type Documentaries = {
     | ({
         _key: string
       } & Gallery)
+    | ({
+        _key: string
+      } & ContactBlock)
   >
 }
 
@@ -681,12 +705,13 @@ export type Geopoint = {
 
 export type AllSanitySchemaTypes =
   | InfoSection
+  | SanityFileAssetReference
+  | ContactBlock
   | SanityImageAssetReference
   | PhotoInfoGalleryItem
   | PhotoInfoGallery
   | TextWithBackgroundColor
   | CampaignReference
-  | SanityFileAssetReference
   | CampaignSection
   | Gallery
   | GalleryItem
@@ -699,12 +724,12 @@ export type AllSanitySchemaTypes =
   | Link
   | BlockContentTextOnly
   | BlockContent
-  | Animation
+  | Contact
   | SanityImageCrop
   | SanityImageHotspot
   | Slug
+  | Animation
   | Campaign
-  | ContactModule
   | AboutPage
   | Documentaries
   | Settings

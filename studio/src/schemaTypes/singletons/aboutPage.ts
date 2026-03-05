@@ -38,6 +38,7 @@ export const aboutPage = defineType({
         {type: 'video'},
         {type: 'textWithBackgroundColor'},
         {type: 'photoInfoGallery'},
+        {type: 'contactBlock'},
       ],
       options: {
         insertMenu: {

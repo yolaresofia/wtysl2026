@@ -2,20 +2,15 @@
 
 import {useEffect, useRef} from 'react'
 import gsap from 'gsap'
-import type {ContactModuleQueryResult} from '@/sanity.types'
 import {PortableText} from 'next-sanity'
+import type {ContactBuilderBlock} from '@/sanity/lib/types'
 
-type ContactHeroProps = NonNullable<ContactModuleQueryResult>
+type Props = {
+  block: ContactBuilderBlock
+}
 
-export const ContactHero = ({
-  centerText,
-  hoverCenterText,
-  firstColumn,
-  secondColumn,
-  thirdColumn,
-  backgroundColor,
-  backgroundVideo,
-}: ContactHeroProps) => {
+export const ContactHero = ({block}: Props) => {
+  const {backgroundType, backgroundVideo, backgroundColor, centerText, hoverCenterText, firstColumn, secondColumn, thirdColumn} = block
   const centerRef = useRef<HTMLSpanElement>(null)
   const hoverCenterRef = useRef<HTMLSpanElement>(null)
   const parentTargetRef = useRef<HTMLSpanElement>(null)
@@ -61,12 +56,12 @@ export const ContactHero = ({
   return (
     <div
       className="w-full h-screen flex flex-col text-white relative overflow-hidden"
-      style={{backgroundColor: backgroundVideo?.url ? undefined : (backgroundColor ?? undefined)}}
+      style={{backgroundColor: backgroundColor ?? undefined}}
     >
-      {backgroundVideo?.url && (
+      {backgroundType === 'video' && backgroundVideo?.url && (
         <video
           className="absolute inset-0 w-full h-full object-cover"
-          src={backgroundVideo.url}
+          src={backgroundVideo.url }
           autoPlay
           muted
           loop
@@ -77,15 +72,12 @@ export const ContactHero = ({
         <a href="mailto:info@whattookyousolong.org">
           <span
             ref={parentTargetRef}
-            className="hover-device:overflow-hidden hover-device:inline-grid py-12 px-2 flex flex-col"
+            className="overflow-hidden inline-grid py-12 px-2"
           >
-            <span ref={centerRef} className="hover-device:col-start-1 hover-device:row-start-1">
+            <span ref={centerRef} className="col-start-1 row-start-1">
               {centerText}
             </span>
-            <span
-              ref={hoverCenterRef}
-              className="hover-device:col-start-1 hover-device:row-start-1 hover-device:opacity-0 hover-device:invisible"
-            >
+            <span ref={hoverCenterRef} className="col-start-1 row-start-1 opacity-0 invisible">
               {hoverCenterText}
             </span>
           </span>

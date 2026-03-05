@@ -1,4 +1,4 @@
-import {CogIcon, DocumentIcon, EnvelopeIcon, HomeIcon} from '@sanity/icons'
+import {CogIcon, DocumentIcon} from '@sanity/icons'
 import type {StructureBuilder, StructureResolver} from 'sanity/structure'
 import pluralize from 'pluralize-esm'
 
@@ -11,7 +11,7 @@ import pluralize from 'pluralize-esm'
 const DISABLED_TYPES = [
   'settings',
   'aboutPage',
-  'contactModule',
+  'contact',
   'assist.instruction.context',
 ]
 
@@ -24,11 +24,10 @@ export const structure: StructureResolver = (S: StructureBuilder) =>
         .title('About Page')
         .child(S.document().schemaType('aboutPage').documentId('aboutPage'))
         .icon(DocumentIcon),
-      // Contact Singleton (content + SEO for /contact, shared section everywhere)
-      S.listItem()
+              S.listItem()
         .title('Contact')
-        .child(S.document().schemaType('contactModule').documentId('contactModule'))
-        .icon(EnvelopeIcon),
+        .child(S.document().schemaType('contact').documentId('contact'))
+        .icon(DocumentIcon),
       S.divider(),
       ...S.documentTypeListItems()
         .filter((listItem: any) => !DISABLED_TYPES.includes(listItem.getId()))

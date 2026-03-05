@@ -3,7 +3,7 @@ import {animation} from './documents/animation'
 import {campaign} from './documents/campaign'
 import {settings} from './singletons/settings'
 import {aboutPage} from './singletons/aboutPage'
-import {contactModule} from './singletons/contactModule'
+import {contact} from './singletons/contact'
 import {link} from './objects/link'
 import {blockContent} from './objects/blockContent'
 import {blockContentTextOnly} from './objects/blockContentTextOnly'
@@ -17,6 +17,7 @@ import {textWithBackgroundColor} from './objects/textWithBackgroundColor'
 import {photoInfoGallery} from './objects/photoInfoGallery'
 import {photoInfoGalleryItem} from './objects/photoInfoGalleryItem'
 import { video } from './objects/video'
+import { contactBlock } from './objects/contactBlock'
 
 // Export an array of all the schema types.  This is used in the Sanity Studio configuration. https://www.sanity.io/docs/studio/schema-types
 
@@ -24,11 +25,11 @@ export const schemaTypes = [
   // Singletons
   settings,
   aboutPage,
-  contactModule,
   // Documents
   documentaries,
   campaign,
   animation,
+  contact,
   // Objects
   blockContent,
   blockContentTextOnly,
@@ -43,4 +44,5 @@ export const schemaTypes = [
   textWithBackgroundColor,
   photoInfoGallery,
   photoInfoGalleryItem,
+  contactBlock,
 ]

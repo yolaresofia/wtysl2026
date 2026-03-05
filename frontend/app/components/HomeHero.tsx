@@ -2,8 +2,11 @@
 
 import {useEffect, useRef} from 'react'
 import {useRouter} from 'next/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
 import gsap from 'gsap'
 import type {SettingsQueryResult} from '@/sanity.types'
+import NavLinks from './NavLinks'
 
 type Props = NonNullable<SettingsQueryResult>
 
@@ -12,6 +15,7 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
   const topRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
   const welcomeRef = useRef<HTMLParagraphElement>(null)
+  const headerRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -22,6 +26,7 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
 
     const ctx = gsap.context(() => {
       gsap.set(welcomeRef.current, {autoAlpha: 0})
+      gsap.set(headerRef.current, {autoAlpha: 0})
 
       gsap.timeline({delay: 0.5})
         .to(topRef.current, {
@@ -39,6 +44,11 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
           duration: 0.8,
           ease: 'power2.out',
         }, '-=0.4')
+        .to(headerRef.current, {
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: 'power2.out',
+        }, '<')
     })
 
     return () => ctx.revert()
@@ -94,9 +104,28 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
         <div style={{...innerStyle, top: '-50vh'}} />
       </div>
 
+      <header
+        ref={headerRef}
+        className="fixed z-50 inset-x-0 top-0 p-9 lg:block hidden opacity-0 invisible"
+      >
+        <div className="flex items-center">
+          <div className="flex-1">
+            {logoUrl && (
+              <Link href="/documentaries">
+                <Image src={logoUrl} alt="Logo" width={100} height={100} className="h-12 w-auto mr-8" />
+              </Link>
+            )}
+          </div>
+          <div className="flex-1">
+            <NavLinks />
+          </div>
+          <div className="flex-1" />
+        </div>
+      </header>
+
       <p
         ref={welcomeRef}
-        className="absolute inset-0 flex items-center justify-center text-white opacity-0 invisible"
+        className="absolute inset-0 flex text-5xl items-center justify-start text-white px-9 pb-36 opacity-0 invisible leading-tighter"
       >
         {welcomeText}
       </p>

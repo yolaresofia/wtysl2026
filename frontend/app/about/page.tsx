@@ -3,8 +3,7 @@ import {notFound} from 'next/navigation'
 import {sanityFetch} from '@/sanity/lib/live'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import ProjectBuilder from '@/app/components/PageBuilder'
-import {aboutPageQuery, contactModuleQuery} from '@/sanity/lib/queries'
-import { ContactHero } from '@/app/contact/components/ContactHero'
+import {aboutPageQuery} from '@/sanity/lib/queries'
 
 type Props = {
   params: Promise<{slug: string}>
@@ -35,8 +34,8 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
 }
 
 export default async function AboutPage() {
-  const [{data: about}, {data: contact}] = await Promise.all([
-    sanityFetch({query: aboutPageQuery}), sanityFetch({query: contactModuleQuery}),
+  const [{data: about}] = await Promise.all([
+    sanityFetch({query: aboutPageQuery}),
   ])
 
   if (!about?._id) {
@@ -46,7 +45,6 @@ export default async function AboutPage() {
   return (
     <>
       <ProjectBuilder documentId={about._id} documentType="about" builderField="aboutBuilder" blocks={about.aboutBuilder ?? []} />
-      {contact && <ContactHero {...contact} />}
     </>
   )
 }

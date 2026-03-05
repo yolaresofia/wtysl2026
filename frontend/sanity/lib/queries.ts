@@ -30,7 +30,7 @@ const blockContentFragment = /* groq */ `[]{
   }
 }`
 
-// Page builder blocks shared across documentaries / animations / campaigns
+// Page builder blocks shared across all content types
 const pageBuilderFragment = /* groq */ `[]{
   _type,
   _key,
@@ -50,17 +50,42 @@ const pageBuilderFragment = /* groq */ `[]{
     }
   },
   _type == "gallery" => {
-  backgroundColor,
-  items[]{
-    _key,
-    type,
-    "imageUrl": select(type == "photo" => image.asset->url),
-    "photoAltText": select(type == "photo" => photoAltText),
-    "thumbnailUrl": select(type == "video" => thumbnail.asset->url),
-    "videoAltText": select(type == "video" => videoAltText),
-    "vimeoUrl": select(type == "video" => vimeoUrl)
+    backgroundColor,
+    items[]{
+      _key,
+      type,
+      "imageUrl": select(type == "photo" => image.asset->url),
+      "photoAltText": select(type == "photo" => photoAltText),
+      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),
+      "videoAltText": select(type == "video" => videoAltText),
+      "vimeoUrl": select(type == "video" => vimeoUrl)
+    }
+  },
+  _type == "textWithBackgroundColor" => {
+    backgroundColor,
+    about ${blockContentFragment}
+  },
+  _type == "photoInfoGallery" => {
+    backgroundColor,
+    title,
+    items[]{
+      _key,
+      name,
+      role,
+      location,
+      image ${imageFragment}
+    }
+  },
+  _type == "contactBlock" => {
+    backgroundType,
+    backgroundVideo ${videoFragment},
+    backgroundColor,
+    centerText,
+    hoverCenterText,
+    firstColumn ${blockContentFragment},
+    secondColumn ${blockContentFragment},
+    thirdColumn ${blockContentFragment}
   }
-}
 }`
 
 // ─────────────────────────────────────────────────────────────
@@ -80,24 +105,17 @@ export const settingsQuery = defineQuery(`
 `)
 
 // ─────────────────────────────────────────────────────────────
-// CONTACT MODULE
-// Fetched once and reused on: about, documentary/animation/campaign
-// detail pages, and the /contact route.
-// NOT fetched on listing pages (/documentaries, /animations, /campaigns).
+// CONTACT PAGE
+// Singleton document with a page builder.
 // ─────────────────────────────────────────────────────────────
 
-export const contactModuleQuery = defineQuery(`
-  *[_type == "contactModule"][0] {
-    backgroundVideo ${videoFragment},
-    backgroundColor,
-    centerText,
-    hoverCenterText,
-    firstColumn ${blockContentFragment},
-    secondColumn ${blockContentFragment},
-    thirdColumn ${blockContentFragment},
+export const contactPageQuery = defineQuery(`
+  *[_type == "contact" && _id == "contact"][0] {
+    _id,
     seoTitle,
     seoDescription,
-    ogImage ${imageFragment}
+    ogImage ${imageFragment},
+    contactBuilder ${pageBuilderFragment}
   }
 `)
 
@@ -228,29 +246,7 @@ export const aboutPageQuery = defineQuery(`
     seoTitle,
     seoDescription,
     ogImage ${imageFragment},
-    aboutBuilder[]{
-      _type,
-      _key,
-      _type == "textWithBackgroundColor" => {
-        backgroundColor,
-        about ${blockContentFragment},
-      },
-      _type == "photoInfoGallery" => {
-        backgroundColor,
-        title,
-        items[]{
-          _key,
-          name,
-          role,
-          location,
-          image ${imageFragment}
-        }
-      },
-      _type == "video" => {
-        "url": vimeoUrl,
-            title
-      },
-    }
+    aboutBuilder ${pageBuilderFragment}
   }
 `)
 

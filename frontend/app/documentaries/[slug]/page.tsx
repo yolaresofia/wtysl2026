@@ -3,8 +3,8 @@ import {notFound} from 'next/navigation'
 import {sanityFetch} from '@/sanity/lib/live'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import ProjectBuilder from '@/app/components/PageBuilder'
-import {contactModuleQuery, documentaryBySlugQuery, documentarySlugsQuery} from '@/sanity/lib/queries'
-import { ContactHero } from '@/app/contact/components/ContactHero'
+import {documentaryBySlugQuery, documentarySlugsQuery} from '@/sanity/lib/queries'
+
 
 type Props = {
   params: Promise<{slug: string}>
@@ -50,8 +50,8 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
 
 export default async function DocumentaryPage(props: Props) {
   const params = await props.params
-  const [{data: documentary}, {data: contact}] = await Promise.all([
-    sanityFetch({query: documentaryBySlugQuery, params}), sanityFetch({query: contactModuleQuery}),
+  const [{data: documentary}] = await Promise.all([
+    sanityFetch({query: documentaryBySlugQuery, params}),
   ])
 
   if (!documentary?._id) {
@@ -61,7 +61,6 @@ export default async function DocumentaryPage(props: Props) {
   return (
     <>
       <ProjectBuilder documentId={documentary._id} documentType="documentaries" builderField="documentariesBuilder" blocks={documentary.documentariesBuilder ?? []} />
-      {contact && <ContactHero {...contact} />}
     </>
   )
 }

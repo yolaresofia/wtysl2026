@@ -3,8 +3,7 @@ import {notFound} from 'next/navigation'
 import {sanityFetch} from '@/sanity/lib/live'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import ProjectBuilder from '@/app/components/PageBuilder'
-import {campaignBySlugQuery, campaignSlugsQuery, contactModuleQuery} from '@/sanity/lib/queries'
-import { ContactHero } from '@/app/contact/components/ContactHero'
+import {campaignBySlugQuery, campaignSlugsQuery} from '@/sanity/lib/queries'
 
 type Props = {
   params: Promise<{slug: string}>
@@ -50,8 +49,8 @@ export async function generateMetadata(props: Props, parent: ResolvingMetadata):
 
 export default async function CampaignPage(props: Props) {
   const params = await props.params
-  const [{data: campaign}, {data: contact}] = await Promise.all([
-    sanityFetch({query: campaignBySlugQuery, params}), sanityFetch({query: contactModuleQuery}),
+  const [{data: campaign}] = await Promise.all([
+    sanityFetch({query: campaignBySlugQuery, params}),
   ])
 
   if (!campaign?._id) {
@@ -61,7 +60,6 @@ export default async function CampaignPage(props: Props) {
   return (
     <>
       <ProjectBuilder documentId={campaign._id} documentType="campaigns" builderField="campaignBuilder" blocks={campaign.campaignBuilder ?? []} />
-      {contact && <ContactHero {...contact} />}
     </>
   )
 }
