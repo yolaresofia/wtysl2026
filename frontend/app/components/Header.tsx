@@ -12,6 +12,7 @@ export default async function Header() {
   ])
   if (!settings) return null
   const logoUrl = settings.logo?.asset ? urlForImage(settings.logo.asset).url() : null
+  const menuVideoUrl = (settings.mobileMenuBackgroundVideo as {url?: string | null} | null)?.url ?? null
   return (
     <>
       <header className="fixed z-50 inset-x-0 top-0 p-9 lg:block hidden">
@@ -34,7 +35,7 @@ export default async function Header() {
         <MobileHeader
           logoUrl={logoUrl}
           contactBlock={contact?.contactBlock ?? null}
-          menuVideoUrl={settings.mobileMenuBackgroundVideo?.url ?? null}
+          menuVideoUrl={menuVideoUrl}
         />
       )}
     </>

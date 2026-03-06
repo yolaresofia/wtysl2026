@@ -22,6 +22,36 @@ export type InfoSection = {
   >
 }
 
+export type SanityImageAssetReference = {
+  _ref: string
+  _type: 'reference'
+  _weak?: boolean
+  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
+}
+
+export type LogoSectionItem = {
+  _type: 'logoSectionItem'
+  altText?: string
+  image?: {
+    asset?: SanityImageAssetReference
+    media?: unknown
+    hotspot?: SanityImageHotspot
+    crop?: SanityImageCrop
+    _type: 'image'
+  }
+}
+
+export type LogoSection = {
+  _type: 'logoSection'
+  backgroundColor: '#FCC554' | '#373B45' | '#000000' | '#707E69' | '#18181B' | '#8C7E79'
+  title: string
+  items?: Array<
+    {
+      _key: string
+    } & LogoSectionItem
+  >
+}
+
 export type SanityFileAssetReference = {
   _ref: string
   _type: 'reference'
@@ -43,13 +73,6 @@ export type ContactBlock = {
   firstColumn?: BlockContent
   secondColumn?: BlockContent
   thirdColumn?: BlockContent
-}
-
-export type SanityImageAssetReference = {
-  _ref: string
-  _type: 'reference'
-  _weak?: boolean
-  [internalGroqTypeReferenceTo]?: 'sanity.imageAsset'
 }
 
 export type PhotoInfoGalleryItem = {
@@ -394,6 +417,9 @@ export type AboutPage = {
     | ({
         _key: string
       } & ContactBlock)
+    | ({
+        _key: string
+      } & LogoSection)
   >
 }
 
@@ -452,6 +478,11 @@ export type Settings = {
   }
   welcomeText?: string
   backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
+  }
+  mobileMenuBackgroundVideo?: {
     asset?: SanityFileAssetReference
     media?: unknown
     _type: 'file'
@@ -705,9 +736,11 @@ export type Geopoint = {
 
 export type AllSanitySchemaTypes =
   | InfoSection
+  | SanityImageAssetReference
+  | LogoSectionItem
+  | LogoSection
   | SanityFileAssetReference
   | ContactBlock
-  | SanityImageAssetReference
   | PhotoInfoGalleryItem
   | PhotoInfoGallery
   | TextWithBackgroundColor
