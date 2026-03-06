@@ -68,7 +68,7 @@ export const ContactHero = ({block}: Props) => {
           playsInline
         />
       )}
-      <h1 className="flex-1 flex md:justify-center items-center md:text-6xl text-[28px] justify-start md:text-center relative z-10 px-5 md:px-9">
+      <h1 className="flex-1 flex md:justify-center items-center md:text-5xl text-3xl justify-start md:text-center relative z-10 px-5 md:px-9">
         <a href="mailto:info@whattookyousolong.org">
           <span
             ref={parentTargetRef}

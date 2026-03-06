@@ -14,7 +14,6 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [shareState, setShareState] = useState<'share' | 'copied'>('share')
-  const isPlayingRef = useRef(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<Player | null>(null)
@@ -31,12 +30,13 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
     return `${m}:${secs.toString().padStart(2, '0')}`
   }
   const togglePlay = () => {
-    if (!playerRef.current) return
-    if (isPlayingRef.current) {
-      playerRef.current.pause()
-    } else {
-      playerRef.current.play()
-    }
+    const player = playerRef.current
+    if (!player) return
+    player.getPaused().then((paused) => {
+      if (!playerRef.current) return
+      if (paused) { player.play().catch(() => {}) }
+      else { player.pause().catch(() => {}) }
+    }).catch(() => {})
   }
 
   const toggleMute = () => {
@@ -56,9 +56,11 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
 
   useEffect(() => {
     if (!containerRef.current) return
-    // If there's already an iframe (strict mode re-mount), remove it first
+    // Remove any existing iframe from strict-mode double-mount
     const existing = containerRef.current.querySelector('iframe')
     if (existing) existing.remove()
+
+    let destroyed = false
     const player = new Player(containerRef.current, {
       id: url,
       controls: false,
@@ -66,29 +68,33 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
       byline: false,
       portrait: false,
       autoplay: autoplay ?? false,
+      muted: false,
     })
     playerRef.current = player
-    let destroyed = false
-    player.on('play', () => { isPlayingRef.current = true; setIsPlaying(true) })
-    player.on('pause', () => { isPlayingRef.current = false; setIsPlaying(false) })
-    player.on('timeupdate', (data) => setCurrentTime(data.seconds))
-    player.getDuration().then((d) => {
-      if (!destroyed) setDuration(d)
+
+    player.ready().then(() => {
+      if (destroyed) return
+      player.on('play', () => { if (!destroyed) setIsPlaying(true) })
+      player.on('pause', () => { if (!destroyed) setIsPlaying(false) })
+      player.on('timeupdate', (data) => { if (!destroyed) setCurrentTime(data.seconds) })
+      player.getDuration().then((d) => { if (!destroyed) setDuration(d) }).catch(() => {})
     }).catch(() => {})
+
     return () => {
       destroyed = true
+      playerRef.current = null
       player.off('play')
       player.off('pause')
       player.off('timeupdate')
       player.destroy().catch(() => {})
-      playerRef.current = null
     }
   }, [url, autoplay])
 
   return (
     <div ref={wrapperRef} className="relative w-screen h-screen bg-black overflow-hidden">
       <div ref={containerRef} className="vimeo-container w-full h-full" />
-      <div className="absolute inset-0 md:hidden" onClick={togglePlay} />
+      {/* Mobile tap zone — only covers the video area above the controls bar */}
+      <div className="absolute inset-0 bottom-24 md:hidden" onClick={togglePlay} />
       {/* Desktop controls */}
       <div className="absolute bottom-0 left-0 right-0 hidden md:flex items-center gap-4 px-6 py-4 text-white text-sm">
         {title && <span className="mr-auto font-semibold">{title}</span>}

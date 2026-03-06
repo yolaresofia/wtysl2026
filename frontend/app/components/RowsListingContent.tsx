@@ -187,7 +187,7 @@ export const RowsListingContent = ({
         </div>
 
         {/* Fixed header bar */}
-        <div className="absolute top-0 inset-x-0 z-35 flex items-center justify-between px-5 pt-20 pb-3 pointer-events-none">
+        <div className="absolute top-0 inset-x-0 z-35 flex items-center justify-between px-5 pt-28 pb-3 pointer-events-none">
           <span className="text-[11px] uppercase tracking-widest text-white/60">Documentaries</span>
           <button
             className="text-[11px] text-white pointer-events-auto"
@@ -199,7 +199,7 @@ export const RowsListingContent = ({
 
         {/* Fixed category label */}
         {!viewAll && activeCategory && (
-          <div className="absolute z-35 px-5 pointer-events-none" style={{top: 'calc(5rem + 28px + 12px)'}}>
+          <div className="absolute z-35 px-5 pointer-events-none" style={{top: 'calc(7rem + 28px + 12px)'}}>
             <span className="text-[11px] text-white/50">{categoryLabels[activeCategory] ?? activeCategory}</span>
           </div>
         )}
@@ -215,7 +215,7 @@ export const RowsListingContent = ({
               href={item.slug ? `/${basePath}/${item.slug}` : '#'}
               data-slide-id={item._id}
               data-category={item.category ?? ''}
-              className="flex flex-col h-screen w-full snap-start justify-center gap-2 px-5"
+              className="flex flex-col h-screen w-full snap-start justify-center px-5"
             >
               <p className="text-3xl text-white">{item.name}</p>
               {item.client && <p className="text-[13px] text-white/60">{item.client}</p>}
@@ -225,12 +225,12 @@ export const RowsListingContent = ({
 
         {/* View All overlay */}
         {viewAll && (
-          <div className="absolute inset-0 z-30 bg-black overflow-y-auto px-5 pb-10" style={{paddingTop: 'calc(5rem + 28px + 24px)'}}>
-            <div className="flex flex-col gap-10">
+          <div className="absolute inset-0 z-30 bg-black overflow-y-auto px-5 pb-10" style={{paddingTop: 'calc(7rem + 28px + 14px)'}}>
+            <div className="flex flex-col gap-5">
               {Object.entries(grouped).map(([category, groupItems]) => (
                 <div key={category}>
                   <p className="text-[11px] text-white/40 mb-4">{categoryLabels[category] ?? category}</p>
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col">
                     {groupItems.map((item) => (
                       <Link
                         key={item._id}

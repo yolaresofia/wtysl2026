@@ -34,9 +34,9 @@ export default function MobileHeader({logoUrl, contactBlock, menuVideoUrl}: Prop
 
   return (
     <>
-      <header className="fixed z-50 inset-x-0 top-0 px-5 py-5 flex items-center justify-between lg:hidden">
+      <header className="fixed z-50 inset-x-0 top-0 px-5 py-5 flex items-start justify-between lg:hidden">
         <Link href="/documentaries">
-          <Image src={logoUrl} alt="Logo" width={100} height={100} className="h-10 w-auto" />
+          <Image src={logoUrl} alt="Logo" width={100} height={100} className="h-11 w-auto" />
         </Link>
         <button
           onClick={() => setOpen((v) => !v)}

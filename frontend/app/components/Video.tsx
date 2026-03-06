@@ -39,6 +39,17 @@ export default function Video({block: {url, title, backgroundVideo}}: Props) {
       {/* VimeoPlayer — mounted on click, autoplays immediately */}
       {open && (
         <div className="absolute inset-0">
+          {/* Cover the fixed nav and show close button */}
+          <div className="fixed inset-x-0 top-0 z-60 flex justify-end px-5 py-5 md:px-9 md:py-9 pointer-events-none">
+            <button
+              className="pointer-events-auto text-xs text-white tracking-wide"
+              onClick={() => setOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+          {/* Invisible bar that sits above the header to block it from showing through */}
+          <div className="fixed inset-x-0 top-0 z-59 h-24 bg-black" />
           <VimeoPlayer url={url ?? ''} title={title ?? undefined} autoplay />
         </div>
       )}

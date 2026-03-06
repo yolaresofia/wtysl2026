@@ -24,7 +24,7 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
       gsap.set(welcomeRef.current, {autoAlpha: 0})
       gsap.set(headerRef.current, {autoAlpha: 0})
 
-      gsap.timeline({delay: 0.5})
+      gsap.timeline({delay: 1.5})
         .to(topRef.current, {
           yPercent: -100,
           duration: 1.4,
@@ -49,7 +49,7 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
           autoAlpha: 0,
           duration: 0.8,
           ease: 'power2.inOut',
-          delay: 3,
+          delay: 4,
           onComplete: () => {
             router.replace('/documentaries')
           },
@@ -160,7 +160,7 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
 
       <p
         ref={welcomeRef}
-        className="absolute inset-0 flex text-5xl items-center justify-start text-white px-9 pb-36 opacity-0 invisible leading-tighter"
+        className="absolute inset-0 flex md:text-5xl text-3xl items-center justify-start text-white px-9 pb-36 opacity-0 invisible leading-tighter"
       >
         {welcomeText}
       </p>

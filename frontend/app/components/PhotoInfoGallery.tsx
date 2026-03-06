@@ -20,7 +20,7 @@ export default function PhotoInfoGallery({block}: Props) {
               />
               <p className="text-lg pt-4">{item.name}</p>
               <p className="text-[13px]">{item.role}</p>
-              <p className="text-[13px] pt-6">{item.location}</p>
+              <p className="text-[13px] pt-6">⚲ {item.location}</p>
             </div>
           )
         })}
