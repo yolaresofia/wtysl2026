@@ -30,6 +30,15 @@ export const settings = defineType({
       },
     }),
     defineField({
+      name: 'mobileMenuBackgroundVideo',
+      title: 'Mobile Menu Background Video',
+      description: 'Used as the background video for the mobile menu.',
+      type: 'file',
+      options: {
+        accept: 'video/*',
+      },
+    }),
+    defineField({
       name: 'siteTitle',
       title: 'Site Title',
       description: 'Used in browser tab and search engine results.',

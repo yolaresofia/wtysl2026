@@ -9,7 +9,7 @@ export default async function CampaignsPage() {
   ])
 
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="lg:h-screen lg:flex lg:justify-center lg:items-center">
       <ColListingContent items={campaigns} />
     </div>
   )

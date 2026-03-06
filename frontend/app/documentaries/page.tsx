@@ -8,7 +8,7 @@ export default async function DocumentariesPage() {
     sanityFetch({query: documentariesListingQuery}),
   ])
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="lg:h-screen lg:flex lg:justify-center lg:items-center">
       <RowsListingContent items={documentaries} basePath="documentaries" />
     </div>
   )

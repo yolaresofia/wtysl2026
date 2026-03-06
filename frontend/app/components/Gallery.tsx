@@ -51,33 +51,19 @@ export default function Gallery({block: {items, backgroundColor}}: Props) {
 
   return (
     <div>
-      <div className="grid grid-cols-4">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
         {items?.map((item, index) => {
-          if (item.type === 'photo') {
-            return (
-              <div key={item._key} onClick={() => setSelectedIndex(index)}>
-                <Image
-                  src={item.imageUrl ?? ''}
-                  alt={item.photoAltText ?? ''}
-                  width={400}
-                  height={300}
-                />
-              </div>
-            )
-          }
-          if (item.type === 'video') {
-            return (
-              <div key={item._key} onClick={() => setSelectedIndex(index)}>
-                <Image
-                  src={item.thumbnailUrl ?? ''}
-                  alt={item.videoAltText ?? ''}
-                  width={400}
-                  height={300}
-                />
-              </div>
-            )
-          }
-          return null
+          const src = item.type === 'photo' ? (item.imageUrl ?? '') : (item.thumbnailUrl ?? '')
+          const alt = item.type === 'photo' ? (item.photoAltText ?? '') : (item.videoAltText ?? '')
+          return (
+            <div
+              key={item._key}
+              className="relative aspect-4/3 cursor-pointer overflow-hidden"
+              onClick={() => setSelectedIndex(index)}
+            >
+              <Image src={src} alt={alt} fill className="object-cover" />
+            </div>
+          )
         })}
       </div>
 

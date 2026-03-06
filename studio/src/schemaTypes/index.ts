@@ -18,6 +18,8 @@ import {photoInfoGallery} from './objects/photoInfoGallery'
 import {photoInfoGalleryItem} from './objects/photoInfoGalleryItem'
 import { video } from './objects/video'
 import { contactBlock } from './objects/contactBlock'
+import { logoSection } from './objects/logoSection'
+import { logoSectionItem } from './objects/logoSectionItem'
 
 // Export an array of all the schema types.  This is used in the Sanity Studio configuration. https://www.sanity.io/docs/studio/schema-types
 
@@ -45,4 +47,6 @@ export const schemaTypes = [
   photoInfoGallery,
   photoInfoGalleryItem,
   contactBlock,
+  logoSection,
+  logoSectionItem,
 ]

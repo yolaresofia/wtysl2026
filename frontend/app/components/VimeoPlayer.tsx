@@ -5,9 +5,10 @@ import Player from '@vimeo/player'
 type Props = {
   url: string
   title?: string
+  autoplay?: boolean
 }
 
-export default function VimeoPlayer({url, title}: Props) {
+export default function VimeoPlayer({url, title, autoplay}: Props) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -55,12 +56,16 @@ export default function VimeoPlayer({url, title}: Props) {
 
   useEffect(() => {
     if (!containerRef.current) return
+    // If there's already an iframe (strict mode re-mount), remove it first
+    const existing = containerRef.current.querySelector('iframe')
+    if (existing) existing.remove()
     const player = new Player(containerRef.current, {
       id: url,
       controls: false,
       title: false,
       byline: false,
       portrait: false,
+      autoplay: autoplay ?? false,
     })
     playerRef.current = player
     let destroyed = false
@@ -69,18 +74,23 @@ export default function VimeoPlayer({url, title}: Props) {
     player.on('timeupdate', (data) => setCurrentTime(data.seconds))
     player.getDuration().then((d) => {
       if (!destroyed) setDuration(d)
-    })
+    }).catch(() => {})
     return () => {
       destroyed = true
-      player.destroy()
+      player.off('play')
+      player.off('pause')
+      player.off('timeupdate')
+      player.destroy().catch(() => {})
       playerRef.current = null
     }
-  }, [])
+  }, [url, autoplay])
 
   return (
     <div ref={wrapperRef} className="relative w-screen h-screen bg-black overflow-hidden">
       <div ref={containerRef} className="vimeo-container w-full h-full" />
-      <div className="absolute bottom-0 left-0 right-0 flex items-center gap-4 px-6 py-4 text-white text-sm">
+      <div className="absolute inset-0 md:hidden" onClick={togglePlay} />
+      {/* Desktop controls */}
+      <div className="absolute bottom-0 left-0 right-0 hidden md:flex items-center gap-4 px-6 py-4 text-white text-sm">
         {title && <span className="mr-auto font-semibold">{title}</span>}
         <button
           onClick={togglePlay}
@@ -101,7 +111,7 @@ export default function VimeoPlayer({url, title}: Props) {
 
         <span className="tabular-nums shrink-0">{formatTime(currentTime)}</span>
         <div
-          className="relative h-0.5 w-32 cursor-pointer bg-white/30 sm:w-56 md:w-80 lg:w-[50vw]"
+          className="relative h-0.5 w-32 cursor-pointer bg-white/30 lg:w-[50vw]"
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect()
             const ratio = (e.clientX - rect.left) / rect.width
@@ -117,23 +127,62 @@ export default function VimeoPlayer({url, title}: Props) {
         <span className="tabular-nums shrink-0">-{formatTime(duration - currentTime)}</span>
 
         <button
-          className="text-sm text-white/80-offset-4 decoration-white/60 hover:text-white/80 shrink-0"
+          className="text-sm text-white/80 hover:text-white shrink-0"
           onClick={toggleMute}
         >
           {isMuted ? 'Sound OFF' : 'Sound ON'}
         </button>
         <button
           onClick={handleShare}
-          className="text-sm text-white/80-offset-4 decoration-white/60 hover:text-white/80"
+          className="text-sm text-white/80 hover:text-white"
         >
           {shareState === 'share' ? 'Share' : 'Copied!'}
         </button>
         <button
-          className="text-sm text-white/80-offset-4 decoration-white/60 hover:text-white/80 shrink-0"
+          className="text-sm text-white/80 hover:text-white shrink-0"
           onClick={handleFullscreen}
         >
           Fullscreen
         </button>
+      </div>
+
+      {/* Mobile controls */}
+      <div className="absolute bottom-0 left-0 right-0 flex flex-col md:hidden px-5 pb-8 text-white text-sm gap-3">
+        {/* Row 1: title — sound — close */}
+        <div className="flex items-center justify-between gap-4">
+          {title && <span className="text-[13px] font-semibold truncate">{title}</span>}
+          <div className="flex items-center gap-4 ml-auto shrink-0">
+            <button className="text-[13px] text-white/80" onClick={toggleMute}>
+              {isMuted ? 'Sound OFF' : 'Sound ON'}
+            </button>
+            <button className="text-[13px] text-white/80" onClick={() => window.history.back()}>
+              Close
+            </button>
+          </div>
+        </div>
+
+        {/* Row 2: full-width progress bar */}
+        <div
+          className="relative h-0.5 w-full cursor-pointer bg-white/30"
+          onClick={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect()
+            const ratio = (e.clientX - rect.left) / rect.width
+            playerRef.current?.setCurrentTime(ratio * duration)
+            setCurrentTime(ratio * duration)
+          }}
+        >
+          <div
+            className="absolute inset-y-0 left-0 h-full bg-white/80"
+            style={{width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%`}}
+          />
+        </div>
+
+        {/* Row 3: fullscreen right */}
+        <div className="flex justify-end">
+          <button className="text-[13px] text-white/80" onClick={handleFullscreen}>
+            Fullscreen
+          </button>
+        </div>
       </div>
     </div>
   )

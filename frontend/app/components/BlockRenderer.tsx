@@ -8,6 +8,7 @@ import type {
   ContactBuilderBlock,
 } from '@/sanity/lib/types'
 import Gallery from './Gallery'
+import LogoSection from './LogoSection'
 import PhotoInfoGallery from './PhotoInfoGallery'
 import ProjectHero from './ProjectHero'
 import TextWithBackgroundColor from './TextWithBackgroundColor'
@@ -32,6 +33,7 @@ type BlockProps = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Blocks: Record<string, React.FC<any>> = {
   gallery: Gallery,
+  logoSection: LogoSection,
   photoInfoGallery: PhotoInfoGallery,
   projectHero: ProjectHero,
   textWithBackgroundColor: TextWithBackgroundColor,

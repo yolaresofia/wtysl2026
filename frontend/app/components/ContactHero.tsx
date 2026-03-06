@@ -68,23 +68,23 @@ export const ContactHero = ({block}: Props) => {
           playsInline
         />
       )}
-      <h1 className="flex-1 flex md:justify-center items-center md:text-6xl text-[28px] justify-start md:text-center relative z-10">
+      <h1 className="flex-1 flex md:justify-center items-center md:text-6xl text-[28px] justify-start md:text-center relative z-10 px-5 md:px-9">
         <a href="mailto:info@whattookyousolong.org">
           <span
             ref={parentTargetRef}
-            className="overflow-hidden inline-grid py-12 px-2"
+            className="overflow-hidden md:inline-grid py-12 flex flex-col"
           >
-            <span ref={centerRef} className="col-start-1 row-start-1">
+            <span ref={centerRef} className="md:col-start-1 md:row-start-1">
               {centerText}
             </span>
-            <span ref={hoverCenterRef} className="col-start-1 row-start-1 opacity-0 invisible">
+            <span ref={hoverCenterRef} className="md:col-start-1 md:row-start-1 md:opacity-0 md:invisible">
               {hoverCenterText}
             </span>
           </span>
         </a>
       </h1>
 
-      <div className="flex justify-between flex-col md:flex-row md:space-x-30 self-end p-4 text-[13px] w-screen relative z-10 space-y-6 md:space-y-0">
+      <div className="flex justify-between flex-col md:flex-row md:space-x-30 self-end p-4 text-[13px] w-screen relative z-10 space-y-6 md:space-y-0 px-5 md:px-9 pb-20 md:pb-9">
         <div className="md:w-1/3 text-left">
           <PortableText value={firstColumn || []} />
         </div>

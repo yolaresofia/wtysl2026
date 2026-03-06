@@ -1,3 +1,6 @@
+'use client'
+
+import {useState} from 'react'
 import {ExtractBlock} from '@/sanity/lib/types'
 import {AnyBuilderBlock} from './BlockRenderer'
 import VimeoPlayer from './VimeoPlayer'
@@ -6,10 +9,39 @@ type Props = {
   block: ExtractBlock<AnyBuilderBlock, 'video'>
 }
 
-export default function Video({block: {url, title}}: Props) {
+export default function Video({block: {url, title, backgroundVideo}}: Props) {
+  const [open, setOpen] = useState(false)
+
   return (
-    <div>
-      <VimeoPlayer url={url ?? ''} title={title ?? undefined} />
+    <div className="relative w-screen h-screen bg-black overflow-hidden">
+      {/* Listing card background video */}
+      {backgroundVideo?.url && (
+        <video
+          src={backgroundVideo.url}
+          className="absolute inset-0 w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+      )}
+
+      {/* Watch video button — centered, hidden once open */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="absolute inset-0 flex items-center justify-center text-white text-sm tracking-wide"
+        >
+          Watch video
+        </button>
+      )}
+
+      {/* VimeoPlayer — mounted on click, autoplays immediately */}
+      {open && (
+        <div className="absolute inset-0">
+          <VimeoPlayer url={url ?? ''} title={title ?? undefined} autoplay />
+        </div>
+      )}
     </div>
   )
 }

@@ -39,6 +39,7 @@ export const aboutPage = defineType({
         {type: 'textWithBackgroundColor'},
         {type: 'photoInfoGallery'},
         {type: 'contactBlock'},
+        {type: 'logoSection'},
       ],
       options: {
         insertMenu: {

@@ -36,7 +36,8 @@ const pageBuilderFragment = /* groq */ `[]{
   _key,
   _type == "video" => {
     "url": vimeoUrl,
-     title
+    title,
+    "backgroundVideo": ^.backgroundVideo ${videoFragment}
   },
   _type == "projectHero" => {
     backgroundColor,
@@ -85,6 +86,15 @@ const pageBuilderFragment = /* groq */ `[]{
     firstColumn ${blockContentFragment},
     secondColumn ${blockContentFragment},
     thirdColumn ${blockContentFragment}
+  },
+  _type == "logoSection" => {
+    backgroundColor,
+    title,
+    items[]{
+      _key,
+      altText,
+      image ${imageFragment}
+    }
   }
 }`
 
@@ -98,6 +108,7 @@ export const settingsQuery = defineQuery(`
     logo ${imageFragment},
     welcomeText,
     backgroundVideo ${videoFragment},
+    mobileMenuBackgroundVideo ${videoFragment},
     siteTitle,
     seoDescription,
     ogImage ${imageFragment}
@@ -116,6 +127,16 @@ export const contactPageQuery = defineQuery(`
     seoDescription,
     ogImage ${imageFragment},
     contactBuilder ${pageBuilderFragment}
+  }
+`)
+
+export const contactColumnsQuery = defineQuery(`
+  *[_type == "contact" && _id == "contact"][0] {
+    "contactBlock": contactBuilder[_type == "contactBlock"][0] {
+      firstColumn ${blockContentFragment},
+      secondColumn ${blockContentFragment},
+      thirdColumn ${blockContentFragment}
+    }
   }
 `)
 
