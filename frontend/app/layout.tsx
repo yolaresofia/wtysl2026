@@ -33,6 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s | ${title}`,
       default: title,
     },
+    themeColor: '#0b0b0b',
     openGraph: {
       images: ogImage ? [ogImage] : [],
     },
@@ -51,7 +52,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
         <body>
           {/* The <Toaster> component is responsible for rendering toast notifications used in /app/client-utils.ts and /app/components/DraftModeToast.tsx */}
           <Toaster />
-          <section className="min-h-screen">
+          <section className="min-h-dvh">
             {isDraftMode && (
               <>
                 <DraftModeToast />

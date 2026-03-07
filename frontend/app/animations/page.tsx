@@ -8,7 +8,7 @@ export default async function AnimationsPage() {
     sanityFetch({query: animationCategoriesQuery}),
   ])
   return (
-    <div className="h-screen flex justify-center items-center">
+    <div className="lg:h-dvh lg:flex lg:justify-center lg:items-center">
       <RowsListingContent items={animations} categories={categories ?? []} basePath="animations" />
     </div>
   )

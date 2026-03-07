@@ -135,7 +135,7 @@ export const RowsListingContent = ({
   return (
     <>
       {/* Desktop */}
-      <div ref={containerRef} className="hidden lg:flex relative z-10 w-full h-screen flex-col-reverse justify-center items-center gap-8 text-black px-9 bg-black">
+      <div ref={containerRef} className="hidden lg:flex relative z-10 w-full h-dvh flex-col-reverse justify-center items-center gap-8 text-black px-9 bg-black">
         {items.map((item) =>
           item.backgroundVideo?.url ? (
             <video
@@ -183,7 +183,7 @@ export const RowsListingContent = ({
       </div>
 
       {/* Mobile */}
-      <div className="lg:hidden relative w-full h-screen bg-black overflow-hidden">
+      <div className="lg:hidden relative w-full h-dvh bg-black overflow-hidden">
         {/* Video layer */}
         <div ref={mobileVideoContainerRef} className="absolute inset-0">
           {items.map((item) =>
@@ -228,7 +228,7 @@ export const RowsListingContent = ({
               href={item.slug ? `/${basePath}/${item.slug}` : '#'}
               data-slide-id={item._id}
               data-category={item.category ?? ''}
-              className="flex flex-col h-screen w-full snap-start justify-center px-5"
+              className="flex flex-col h-dvh w-full snap-start justify-center px-5"
             >
               <p className="text-3xl text-white">{item.name}</p>
               {item.client && <p className="text-[14px] text-white">{item.client}</p>}

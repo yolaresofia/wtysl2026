@@ -70,12 +70,12 @@ export default function Gallery({block: {items, backgroundColor}}: Props) {
       {selectedItem && (
         <div className="fixed inset-0 z-50" onClick={() => setSelectedIndex(null)}>
           {selectedItem.type === 'video' && selectedItem.vimeoUrl ? (
-            <div className="w-screen h-screen" onClick={(e) => e.stopPropagation()}>
+            <div className="w-screen h-dvh" onClick={(e) => e.stopPropagation()}>
               <VimeoPlayer url={selectedItem.vimeoUrl} />
             </div>
           ) : (
             <div
-              className="w-screen h-screen flex items-center justify-center"
+              className="w-screen h-dvh flex items-center justify-center"
               style={{backgroundColor: backgroundColor ?? undefined}}
               onClick={(e) => e.stopPropagation()}
             >

@@ -13,7 +13,7 @@ export default function Video({block: {url, title, backgroundVideo}}: Props) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="relative w-screen h-screen bg-black overflow-hidden">
+    <div className="relative w-screen h-dvh bg-black overflow-hidden">
       {/* Listing card background video */}
       {backgroundVideo?.url && (
         <video

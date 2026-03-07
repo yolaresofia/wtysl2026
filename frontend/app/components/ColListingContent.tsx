@@ -86,7 +86,7 @@ export const ColListingContent = ({items}: {items: ColListingItem[]}) => {
   return (
     <>
       {/* Desktop */}
-      <div ref={containerRef} className="hidden lg:flex relative z-10 w-full h-screen flex-col-reverse justify-center items-center gap-8 text-black px-9">
+      <div ref={containerRef} className="hidden lg:flex relative z-10 w-full h-dvh flex-col-reverse justify-center items-center gap-8 text-black px-9">
         {items.map((item) =>
           item.backgroundVideo?.url ? (
             <video
@@ -125,7 +125,7 @@ export const ColListingContent = ({items}: {items: ColListingItem[]}) => {
       </div>
 
       {/* Mobile: shared fixed video + scroll-snap text slides */}
-      <div className="lg:hidden relative w-full h-screen bg-black overflow-hidden">
+      <div className="lg:hidden relative w-full h-dvh bg-black overflow-hidden">
         {/* Video layer */}
         <div ref={mobileVideoContainerRef} className="absolute inset-0">
           {items.map((item) =>
@@ -153,7 +153,7 @@ export const ColListingContent = ({items}: {items: ColListingItem[]}) => {
               key={item._id}
               href={item.slug ? `/campaigns/${item.slug}` : '#'}
               data-slide-id={item._id}
-              className="flex h-screen w-full snap-start items-center"
+              className="flex h-dvh w-full snap-start items-center"
             >
               <p className="text-3xl text-white px-6">{item.name}</p>
             </Link>

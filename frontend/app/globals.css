@@ -83,6 +83,7 @@
   html,
   body {
     overscroll-behavior: none;
+    background-color: #0b0b0b;
   }
   .vimeo-container {
     position: relative;

@@ -55,7 +55,7 @@ export const ContactHero = ({block}: Props) => {
 
   return (
     <div
-      className="w-full h-screen flex flex-col text-white relative overflow-hidden"
+      className="w-full h-dvh flex flex-col text-white relative overflow-hidden"
       style={{backgroundColor: backgroundColor ?? undefined}}
     >
       {backgroundType === 'video' && backgroundVideo?.url && (

@@ -91,7 +91,7 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
   }, [url, autoplay])
 
   return (
-    <div ref={wrapperRef} className="relative w-screen h-screen bg-black overflow-hidden">
+    <div ref={wrapperRef} className="relative w-screen h-dvh bg-black overflow-hidden">
       <div ref={containerRef} className="vimeo-container w-full h-full" />
       {/* Mobile tap zone — only covers the video area above the controls bar */}
       <div className="absolute inset-0 bottom-44 md:hidden" onClick={togglePlay} />
