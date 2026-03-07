@@ -329,7 +329,7 @@ export type Animation = {
     _type: 'image'
   }
   client?: string
-  category: 'category-a' | 'category-b' | 'category-c'
+  category: string
   backgroundVideo?: {
     asset?: SanityFileAssetReference
     media?: unknown
@@ -441,7 +441,7 @@ export type Documentaries = {
     _type: 'image'
   }
   client?: string
-  category: 'most-viewed' | 'most-recent' | 'award-winning'
+  category: string
   backgroundVideo?: {
     asset?: SanityFileAssetReference
     media?: unknown
@@ -487,6 +487,18 @@ export type Settings = {
     media?: unknown
     _type: 'file'
   }
+  documentaryCategories?: Array<{
+    title: string
+    value: Slug
+    _type: 'category'
+    _key: string
+  }>
+  animationCategories?: Array<{
+    title: string
+    value: Slug
+    _type: 'category'
+    _key: string
+  }>
   siteTitle: string
   seoDescription?: string
   ogImage?: {
@@ -1190,14 +1202,22 @@ export type ContactColumnsQueryResult = {
 } | null
 
 // Source: sanity/lib/queries.ts
+// Variable: documentaryCategoriesQuery
+// Query: *[_type == "settings"][0].documentaryCategories[] {    title,    "value": value.current  }
+export type DocumentaryCategoriesQueryResult = Array<{
+  title: string
+  value: string
+}> | null
+
+// Source: sanity/lib/queries.ts
 // Variable: documentariesListingQuery
-// Query: *[_type == "documentaries"] | order(_createdAt desc) {    _id,    name,    "slug": slug.current,    client,    category,    backgroundVideo {   "url": asset->url}  }
+// Query: *[_type == "documentaries" && !(_id in path("drafts.**"))] | order(_createdAt desc) {    _id,    name,    "slug": slug.current,    client,    category,    backgroundVideo {   "url": asset->url}  }
 export type DocumentariesListingQueryResult = Array<{
   _id: string
   name: string
   slug: string
   client: string | null
-  category: 'award-winning' | 'most-recent' | 'most-viewed'
+  category: string
   backgroundVideo: {
     url: string | null
   } | null
@@ -1703,14 +1723,22 @@ export type CampaignSlugsQueryResult = Array<{
 }>
 
 // Source: sanity/lib/queries.ts
+// Variable: animationCategoriesQuery
+// Query: *[_type == "settings"][0].animationCategories[] {    title,    "value": value.current  }
+export type AnimationCategoriesQueryResult = Array<{
+  title: string
+  value: string
+}> | null
+
+// Source: sanity/lib/queries.ts
 // Variable: animationsListingQuery
-// Query: *[_type == "animation"] | order(_createdAt desc) {    _id,    name,    "slug": slug.current,    client,    category,    backgroundVideo {   "url": asset->url}  }
+// Query: *[_type == "animation" && !(_id in path("drafts.**"))] | order(_createdAt desc) {    _id,    name,    "slug": slug.current,    client,    category,    backgroundVideo {   "url": asset->url}  }
 export type AnimationsListingQueryResult = Array<{
   _id: string
   name: string
   slug: string
   client: string | null
-  category: 'category-a' | 'category-b' | 'category-c'
+  category: string
   backgroundVideo: {
     url: string | null
   } | null
@@ -2308,13 +2336,15 @@ declare module '@sanity/client' {
     '\n  *[_type == "settings"][0] {\n    logo {\n  ...,\n  asset->\n},\n    welcomeText,\n    backgroundVideo {\n   "url": asset->url\n},\n    mobileMenuBackgroundVideo {\n   "url": asset->url\n},\n    siteTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n}\n  }\n': SettingsQueryResult
     '\n  *[_type == "contact" && _id == "contact"][0] {\n    _id,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    contactBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n    title,\n    "backgroundVideo": ^.backgroundVideo {\n   "url": asset->url\n}\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "logoSection" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      altText,\n      image {\n  ...,\n  asset->\n}\n    }\n  }\n}\n  }\n': ContactPageQueryResult
     '\n  *[_type == "contact" && _id == "contact"][0] {\n    "contactBlock": contactBuilder[_type == "contactBlock"][0] {\n      firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n      secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n      thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n    }\n  }\n': ContactColumnsQueryResult
-    '\n  *[_type == "documentaries"] | order(_createdAt desc) {\n    _id,\n    name,\n    "slug": slug.current,\n    client,\n    category,\n    backgroundVideo {\n   "url": asset->url\n}\n  }\n': DocumentariesListingQueryResult
+    '\n  *[_type == "settings"][0].documentaryCategories[] {\n    title,\n    "value": value.current\n  }\n': DocumentaryCategoriesQueryResult
+    '\n  *[_type == "documentaries" && !(_id in path("drafts.**"))] | order(_createdAt desc) {\n    _id,\n    name,\n    "slug": slug.current,\n    client,\n    category,\n    backgroundVideo {\n   "url": asset->url\n}\n  }\n': DocumentariesListingQueryResult
     '\n  *[_type == "documentaries" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    client,\n    backgroundVideo {\n   "url": asset->url\n},\n    documentariesBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n    title,\n    "backgroundVideo": ^.backgroundVideo {\n   "url": asset->url\n}\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "logoSection" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      altText,\n      image {\n  ...,\n  asset->\n}\n    }\n  }\n}\n  }\n': DocumentaryBySlugQueryResult
     '\n  *[_type == "documentaries" && defined(slug.current)] {\n    "slug": slug.current\n  }\n': DocumentarySlugsQueryResult
     '\n  *[_type == "campaign"] | order(_createdAt desc) {\n    _id,\n    name,\n    "slug": slug.current,\n    backgroundVideo {\n   "url": asset->url\n}\n  }\n': CampaignsListingQueryResult
     '\n  *[_type == "campaign" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    backgroundVideo {\n   "url": asset->url\n},\n    campaignBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n    title,\n    "backgroundVideo": ^.backgroundVideo {\n   "url": asset->url\n}\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "logoSection" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      altText,\n      image {\n  ...,\n  asset->\n}\n    }\n  }\n}\n  }\n': CampaignBySlugQueryResult
     '\n  *[_type == "campaign" && defined(slug.current)] {\n    "slug": slug.current\n  }\n': CampaignSlugsQueryResult
-    '\n  *[_type == "animation"] | order(_createdAt desc) {\n    _id,\n    name,\n    "slug": slug.current,\n    client,\n    category,\n    backgroundVideo {\n   "url": asset->url\n}\n  }\n': AnimationsListingQueryResult
+    '\n  *[_type == "settings"][0].animationCategories[] {\n    title,\n    "value": value.current\n  }\n': AnimationCategoriesQueryResult
+    '\n  *[_type == "animation" && !(_id in path("drafts.**"))] | order(_createdAt desc) {\n    _id,\n    name,\n    "slug": slug.current,\n    client,\n    category,\n    backgroundVideo {\n   "url": asset->url\n}\n  }\n': AnimationsListingQueryResult
     '\n  *[_type == "animation" && slug.current == $slug][0] {\n    _id,\n    name,\n    "slug": slug.current,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    client,\n    backgroundVideo {\n   "url": asset->url\n},\n    animationBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n    title,\n    "backgroundVideo": ^.backgroundVideo {\n   "url": asset->url\n}\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "logoSection" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      altText,\n      image {\n  ...,\n  asset->\n}\n    }\n  }\n}\n  }\n': AnimationBySlugQueryResult
     '\n  *[_type == "animation" && defined(slug.current)] {\n    "slug": slug.current\n  }\n': AnimationSlugsQueryResult
     '\n  *[_type == "aboutPage"][0] {\n    _id,\n    seoTitle,\n    seoDescription,\n    ogImage {\n  ...,\n  asset->\n},\n    aboutBuilder []{\n  _type,\n  _key,\n  _type == "video" => {\n    "url": vimeoUrl,\n    title,\n    "backgroundVideo": ^.backgroundVideo {\n   "url": asset->url\n}\n  },\n  _type == "projectHero" => {\n    backgroundColor,\n    title,\n    subtitle,\n    about,\n    infoSectionTitle,\n    infoSection {\n      title,\n      items[]{ title, text }\n    }\n  },\n  _type == "gallery" => {\n    backgroundColor,\n    items[]{\n      _key,\n      type,\n      "imageUrl": select(type == "photo" => image.asset->url),\n      "photoAltText": select(type == "photo" => photoAltText),\n      "thumbnailUrl": select(type == "video" => thumbnail.asset->url),\n      "videoAltText": select(type == "video" => videoAltText),\n      "vimeoUrl": select(type == "video" => vimeoUrl)\n    }\n  },\n  _type == "textWithBackgroundColor" => {\n    backgroundColor,\n    about []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "photoInfoGallery" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      name,\n      role,\n      location,\n      image {\n  ...,\n  asset->\n}\n    }\n  },\n  _type == "contactBlock" => {\n    backgroundType,\n    backgroundVideo {\n   "url": asset->url\n},\n    backgroundColor,\n    centerText,\n    hoverCenterText,\n    firstColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    secondColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n},\n    thirdColumn []{\n  ...,\n  markDefs[]{\n    ...,\n    _type == "link" => {\n      ...,\n      linkType == "documentaries" => {\n        "slug": documentaries->slug.current\n      }\n    }\n  }\n}\n  },\n  _type == "logoSection" => {\n    backgroundColor,\n    title,\n    items[]{\n      _key,\n      altText,\n      image {\n  ...,\n  asset->\n}\n    }\n  }\n}\n  }\n': AboutPageQueryResult

@@ -18,7 +18,7 @@ export default function ProjectHero({
         <h2 className="md:text-xl text-[17px]">{subtitle}</h2>
         <p className="md:text-lg text-[15px]">{about}</p>
       </div>
-      <div className="flex flex-col md:flex-row pt-16 md:pt-50 w-full text-[13px] gap-y-6 md:gap-y-0">
+      <div className="flex flex-col md:flex-row pt-16 md:pt-50 w-full text-[14px] gap-y-6 md:gap-y-0">
         <p className="md:w-1/12 opacity-30">{infoSectionTitle}</p>
         <div className="flex flex-wrap gap-x-30 gap-y-6 md:w-11/12 md:pl-8">
           {infoSection?.items?.map((item) => (

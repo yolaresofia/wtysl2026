@@ -84,7 +84,7 @@ export const ContactHero = ({block}: Props) => {
         </a>
       </h1>
 
-      <div className="flex justify-between flex-col md:flex-row md:space-x-30 self-end p-4 text-[13px] w-screen relative z-10 space-y-6 md:space-y-0 px-5 md:px-9 pb-20 md:pb-9">
+      <div className="flex justify-between flex-col md:flex-row md:space-x-30 self-end p-4 text-[14px] w-screen relative z-10 space-y-6 md:space-y-0 px-5 md:px-9 pb-20 md:pb-9">
         <div className="md:w-1/3 text-left">
           <PortableText value={firstColumn || []} />
         </div>

@@ -94,9 +94,9 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
     <div ref={wrapperRef} className="relative w-screen h-screen bg-black overflow-hidden">
       <div ref={containerRef} className="vimeo-container w-full h-full" />
       {/* Mobile tap zone — only covers the video area above the controls bar */}
-      <div className="absolute inset-0 bottom-24 md:hidden" onClick={togglePlay} />
+      <div className="absolute inset-0 bottom-44 md:hidden" onClick={togglePlay} />
       {/* Desktop controls */}
-      <div className="absolute bottom-0 left-0 right-0 hidden md:flex items-center gap-4 px-6 py-4 text-white text-sm">
+      <div className="absolute bottom-0 left-0 right-0 hidden md:flex items-center gap-4 px-9 py-4 text-white text-sm">
         {title && <span className="mr-auto font-semibold">{title}</span>}
         <button
           onClick={togglePlay}
@@ -117,7 +117,7 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
 
         <span className="tabular-nums shrink-0">{formatTime(currentTime)}</span>
         <div
-          className="relative h-0.5 w-32 cursor-pointer bg-white/30 lg:w-[50vw]"
+          className="relative h-4 w-32 cursor-pointer lg:w-[50vw] flex items-center"
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect()
             const ratio = (e.clientX - rect.left) / rect.width
@@ -125,8 +125,9 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
             setCurrentTime(ratio * duration)
           }}
         >
+          <div className="absolute inset-x-0 h-px bg-white/30" />
           <div
-            className="absolute inset-y-0 left-0 h-full bg-white/80"
+            className="absolute left-0 h-0.5 bg-white/80"
             style={{width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%`}}
           />
         </div>
@@ -155,21 +156,18 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
       {/* Mobile controls */}
       <div className="absolute bottom-0 left-0 right-0 flex flex-col md:hidden px-5 pb-8 text-white text-sm gap-3">
         {/* Row 1: title — sound — close */}
-        <div className="flex items-center justify-between gap-4">
-          {title && <span className="text-[13px] font-semibold truncate">{title}</span>}
+        <div className="flex items-center justify-between gap-4 pb-8">
+          {title && <span className="text-[14px] font-semibold truncate">{title}</span>}
           <div className="flex items-center gap-4 ml-auto shrink-0">
-            <button className="text-[13px] text-white/80" onClick={toggleMute}>
+            <button className="text-[14px] font-semibold truncate" onClick={toggleMute}>
               {isMuted ? 'Sound OFF' : 'Sound ON'}
-            </button>
-            <button className="text-[13px] text-white/80" onClick={() => window.history.back()}>
-              Close [x]
             </button>
           </div>
         </div>
 
         {/* Row 2: full-width progress bar */}
         <div
-          className="relative h-0.5 w-full cursor-pointer bg-white/30"
+          className="relative h-4 w-full cursor-pointer flex items-center"
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect()
             const ratio = (e.clientX - rect.left) / rect.width
@@ -177,15 +175,16 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
             setCurrentTime(ratio * duration)
           }}
         >
+          <div className="absolute inset-x-0 h-px bg-white/30" />
           <div
-            className="absolute inset-y-0 left-0 h-full bg-white/80"
+            className="absolute left-0 h-0.5 bg-white/80"
             style={{width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%`}}
           />
         </div>
 
         {/* Row 3: fullscreen right */}
-        <div className="flex justify-end">
-          <button className="text-[13px] text-white/80" onClick={handleFullscreen}>
+        <div className="flex justify-end pt-8">
+          <button className="text-[14px] font-semibold truncate" onClick={handleFullscreen}>
             Fullscreen
           </button>
         </div>

@@ -47,7 +47,7 @@ export default function MobileHeader({logoUrl, contactBlock, menuVideoUrl}: Prop
       </header>
 
       {open && (
-        <div className="fixed inset-0 z-40 bg-black flex flex-col px-5 pt-40 pb-10 lg:hidden overflow-y-auto">
+        <div className="fixed inset-0 z-40 bg-black flex flex-col px-5 pt-40 lg:hidden overflow-y-auto">
           {menuVideoUrl && (
             <video
               src={menuVideoUrl}
@@ -72,7 +72,7 @@ export default function MobileHeader({logoUrl, contactBlock, menuVideoUrl}: Prop
           </nav>
 
           {contactBlock && (
-            <div className="relative flex flex-col gap-6 text-[14px] text-white/60 mt-auto pr-12">
+            <div className="relative flex flex-col gap-6 text-[14px] text-white/60 mt-auto pb-20">
               {contactBlock.firstColumn && (
                 <PortableText value={contactBlock.firstColumn as Parameters<typeof PortableText>[0]['value']} />
               )}

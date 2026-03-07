@@ -352,9 +352,19 @@ export function AnimatedSection() {
 
 ## Tailwind CSS Conventions
 
+**Responsiveness is mandatory.** Every component must work on mobile, tablet, and desktop. No exceptions. For detailed patterns and a testing checklist, read `references/tailwind-responsive.md`.
+
+Core rules:
+- **Mobile-first always.** Write base styles for mobile, add `md:` and `lg:` overrides.
+- **Never use `h-screen` for full-height sections.** Use `min-h-dvh` or `h-dvh` — these respect the mobile browser chrome. See `references/tailwind-responsive.md` for the full viewport height guide.
+- **Always set background-color on `html`/`body`** in globals.css to prevent white bleed on mobile overscroll.
+- **Always include `themeColor`** in root layout metadata to color the browser chrome.
+- **Never use fixed pixel widths.** Use `w-full`, `max-w-*`, or grid columns instead.
+- **Scale typography** across breakpoints (e.g., `text-2xl md:text-4xl lg:text-6xl`).
+- **Scale spacing** across breakpoints (e.g., `py-16 md:py-24 lg:py-32`).
+- **Always include `sizes`** on `next/image` components for responsive image loading.
 - Use Tailwind utility classes directly — no custom CSS unless truly necessary.
-- Mobile-first responsive: base styles for mobile, then `md:`, `lg:` prefixes.
-- Page containers: `max-w-7xl mx-auto px-4`.
+- Page containers: `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8`.
 - Use `clsx` + `tailwind-merge` for conditional classes:
 
 ```ts
@@ -388,3 +398,5 @@ export function cn(...inputs: ClassValue[]) {
 - Explain GSAP properties with brief comments — the user is learning.
 - When creating a new content type, provide all three pieces: schema (in `studio/`), GROQ query + types (in `frontend/lib/sanity/`), and component (in `frontend/components/`).
 - Reference GSAP patterns by name from `references/gsap-patterns.md`.
+- **Every component must be responsive.** Always test mentally against 375px, 768px, and 1440px. Reference `references/tailwind-responsive.md` for patterns.
+- Never output fixed pixel widths. Always use fluid, responsive Tailwind classes.

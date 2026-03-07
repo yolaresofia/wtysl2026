@@ -42,7 +42,7 @@ export default function Video({block: {url, title, backgroundVideo}}: Props) {
           {/* Cover the fixed nav and show close button */}
           <div className="fixed inset-x-0 top-0 z-60 flex justify-end px-5 py-5 md:px-9 md:py-9 pointer-events-none">
             <button
-              className="pointer-events-auto text-xs text-white tracking-wide"
+              className="pointer-events-auto text-[14px] text-white tracking-wide"
               onClick={() => setOpen(false)}
             >
               Close [x]

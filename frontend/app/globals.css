@@ -76,6 +76,10 @@
 }
 
 @layer base {
+  *:focus {
+    outline: none;
+  }
+
   html,
   body {
     overscroll-behavior: none;

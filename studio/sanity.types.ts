@@ -329,7 +329,7 @@ export type Animation = {
     _type: 'image'
   }
   client?: string
-  category: 'category-a' | 'category-b' | 'category-c'
+  category: string
   backgroundVideo?: {
     asset?: SanityFileAssetReference
     media?: unknown
@@ -441,7 +441,7 @@ export type Documentaries = {
     _type: 'image'
   }
   client?: string
-  category: 'most-viewed' | 'most-recent' | 'award-winning'
+  category: string
   backgroundVideo?: {
     asset?: SanityFileAssetReference
     media?: unknown
@@ -487,6 +487,18 @@ export type Settings = {
     media?: unknown
     _type: 'file'
   }
+  documentaryCategories?: Array<{
+    title: string
+    value: Slug
+    _type: 'category'
+    _key: string
+  }>
+  animationCategories?: Array<{
+    title: string
+    value: Slug
+    _type: 'category'
+    _key: string
+  }>
   siteTitle: string
   seoDescription?: string
   ogImage?: {
