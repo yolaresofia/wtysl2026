@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {StackCompactIcon} from '@sanity/icons'
+import {AnimationCategoryInput} from '../../components/CategoryInput'
 
 export const animation = defineType({
   name: 'animation',
@@ -75,16 +76,23 @@ export const animation = defineType({
       type: 'string',
       group: 'content',
       description: 'Determines which section this animation appears in on the listing page.',
-      options: {
-        // TODO: replace these placeholder values with the real animation categories
-        list: [
-          {title: 'lorem ipsum', value: 'category-a'},
-          {title: 'dolor', value: 'category-b'},
-          {title: 'sit', value: 'category-c'},
-        ],
-        layout: 'radio',
+      components: {
+        input: AnimationCategoryInput,
       },
-      validation: (Rule) => Rule.required().error('Please select a category.'),
+      validation: (Rule) => [
+        Rule.required().error('Please select a category.'),
+        Rule.custom(async (value, context) => {
+          if (!value) return true
+          const {document, getClient} = context
+          const client = getClient({apiVersion: '2024-01-01'})
+          const id = document?._id?.replace(/^drafts\./, '')
+          const count = await client.fetch(
+            `count(*[_type == "animation" && category == $category && _id != $id && !(_id in path("drafts.**"))])`,
+            {category: value, id},
+          )
+          return count < 5 ? true : 'This category already has 5 animations. Remove one before adding another.'
+        }),
+      ],
     }),
     defineField({
       name: 'backgroundVideo',

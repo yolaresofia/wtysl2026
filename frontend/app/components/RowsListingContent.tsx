@@ -13,29 +13,27 @@ type RowsListingItem = {
   slug: string | null
 }
 
+type Category = {
+  title: string | null
+  value: string | null
+}
+
 export const RowsListingContent = ({
   items,
+  categories,
   basePath,
 }: {
   items: RowsListingItem[]
+  categories: Category[]
   basePath: string
 }) => {
-  const [hoveredId, setHoveredId] = useState<string | null>(null)
-  const activeIdRef = useRef<string | null>(items[0]?._id ?? null)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const mobileVideoContainerRef = useRef<HTMLDivElement>(null)
-  const mobileScrollRef = useRef<HTMLDivElement>(null)
-  const mobileActiveIdRef = useRef<string | null>(items[0]?._id ?? null)
+  // Build label lookup from categories prop
+  const categoryLabels: Record<string, string> = {}
+  categories.forEach((c) => {
+    if (c.value && c.title) categoryLabels[c.value] = c.title
+  })
 
-  const [viewAll, setViewAll] = useState(false)
-  const [activeCategory, setActiveCategory] = useState<string | null>(items[0]?.category ?? null)
-
-  const categoryLabels: Record<string, string> = {
-    'most-viewed': 'Most Viewed',
-    'most-recent': 'Most Recent',
-    'award-winning': 'Award Winning',
-  }
-
+  // Group items by category
   const grouped = items.reduce(
     (acc, item) => {
       const key = item.category || ''
@@ -46,16 +44,34 @@ export const RowsListingContent = ({
     {} as Record<string, RowsListingItem[]>,
   )
 
-  // Ordered list of slides: first slide is the header, then items
-  // Each item knows its category
-  const slides = items
+  // Order groups by the categories array from settings.
+  // Fall back to insertion order from items if no categories are configured yet.
+  const orderedCategories = categories.length > 0
+    ? categories.map((c) => c.value ?? '').filter((v) => v && grouped[v])
+    : Object.keys(grouped)
+
+  // Mobile slides ordered by category (same order as desktop groups)
+  const slides = orderedCategories.flatMap((cat) => grouped[cat] ?? [])
+
+  // First item in display order (used for initial video + category state)
+  const firstItem = slides[0] ?? null
+
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const activeIdRef = useRef<string | null>(firstItem?._id ?? null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const mobileVideoContainerRef = useRef<HTMLDivElement>(null)
+  const mobileScrollRef = useRef<HTMLDivElement>(null)
+  const mobileActiveIdRef = useRef<string | null>(firstItem?._id ?? null)
+
+  const [viewAll, setViewAll] = useState(false)
+  const [activeCategory, setActiveCategory] = useState<string | null>(firstItem?.category ?? null)
 
   // Desktop: init videos
   useEffect(() => {
     if (!containerRef.current) return
     const videos = containerRef.current.querySelectorAll<HTMLVideoElement>('video[data-id]')
     videos.forEach((v) => {
-      const isFirst = v.dataset.id === items[0]?._id
+      const isFirst = v.dataset.id === firstItem?._id
       gsap.set(v, {autoAlpha: isFirst ? 1 : 0})
       if (isFirst) v.play().catch(() => {})
     })
@@ -78,7 +94,7 @@ export const RowsListingContent = ({
 
     const videos = mobileVideoContainerRef.current.querySelectorAll<HTMLVideoElement>('video[data-id]')
     videos.forEach((v) => {
-      const isFirst = v.dataset.id === items[0]?._id
+      const isFirst = v.dataset.id === firstItem?._id
       gsap.set(v, {autoAlpha: isFirst ? 1 : 0})
       if (isFirst) v.play().catch(() => {})
     })
@@ -135,7 +151,7 @@ export const RowsListingContent = ({
           ) : null,
         )}
         <div className="relative z-10 w-full flex flex-col-reverse gap-20">
-          {Object.entries(grouped).map(([category, groupItems]) => (
+          {orderedCategories.map((category) => (
             <section className="flex w-full text-[13px]" key={category}>
               <p className="w-1/12 text-white opacity-80">{categoryLabels[category] ?? category}</p>
               <div
@@ -146,7 +162,7 @@ export const RowsListingContent = ({
                   setHoveredId(null)
                 }}
               >
-                {groupItems.map((item) => (
+                {grouped[category].map((item) => (
                   <Link
                     href={item.slug ? `/${basePath}/${item.slug}` : '#'}
                     key={item._id}
@@ -186,25 +202,22 @@ export const RowsListingContent = ({
           )}
         </div>
 
-        {/* Fixed header bar */}
         <div className="absolute top-0 inset-x-0 z-35 flex items-center justify-between px-5 pt-28 pb-3 pointer-events-none">
-          <span className="text-[11px] uppercase tracking-widest text-white/60">Documentaries</span>
+          <span className="text-xs uppercase tracking-widest text-white/60">Documentaries</span>
           <button
-            className="text-[11px] text-white pointer-events-auto"
+            className="text-[14px] text-white pointer-events-auto"
             onClick={() => setViewAll((v) => !v)}
           >
-            {viewAll ? 'Close' : 'View All'}
+            {viewAll ? 'Close [x]' : 'View All'}
           </button>
         </div>
 
-        {/* Fixed category label */}
         {!viewAll && activeCategory && (
           <div className="absolute z-35 px-5 pointer-events-none" style={{top: 'calc(7rem + 28px + 12px)'}}>
-            <span className="text-[11px] text-white/50">{categoryLabels[activeCategory] ?? activeCategory}</span>
+            <span className="text-[14px] text-white/50">{categoryLabels[activeCategory] ?? activeCategory}</span>
           </div>
         )}
 
-        {/* Scroll-snap slides */}
         <div
           ref={mobileScrollRef}
           className="relative z-10 h-full overflow-y-scroll snap-y snap-mandatory"
@@ -218,7 +231,7 @@ export const RowsListingContent = ({
               className="flex flex-col h-screen w-full snap-start justify-center px-5"
             >
               <p className="text-3xl text-white">{item.name}</p>
-              {item.client && <p className="text-[13px] text-white/60">{item.client}</p>}
+              {item.client && <p className="text-[14px] text-white">{item.client}</p>}
             </Link>
           ))}
         </div>
@@ -227,19 +240,18 @@ export const RowsListingContent = ({
         {viewAll && (
           <div className="absolute inset-0 z-30 bg-black overflow-y-auto px-5 pb-10" style={{paddingTop: 'calc(7rem + 28px + 14px)'}}>
             <div className="flex flex-col gap-5">
-              {Object.entries(grouped).map(([category, groupItems]) => (
+              {orderedCategories.map((category) => (
                 <div key={category}>
-                  <p className="text-[11px] text-white/40 mb-4">{categoryLabels[category] ?? category}</p>
+                  <p className="text-[14px] text-white/40 mb-4">{categoryLabels[category] ?? category}</p>
                   <div className="flex flex-col">
-                    {groupItems.map((item) => (
+                    {grouped[category].map((item) => (
                       <Link
                         key={item._id}
                         href={item.slug ? `/${basePath}/${item.slug}` : '#'}
                         onClick={() => setViewAll(false)}
                         className="flex justify-between items-baseline"
                       >
-                        <p className="text-white text-[15px]">{item.name}</p>
-                        <p className="text-white/40 text-[11px]">{item.client}</p>
+                        <p className="text-white text-[17px]">{item.name}</p>
                       </Link>
                     ))}
                   </div>

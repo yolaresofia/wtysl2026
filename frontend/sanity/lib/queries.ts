@@ -145,8 +145,15 @@ export const contactColumnsQuery = defineQuery(`
 // All published documentaries. Group by category on the frontend.
 // ─────────────────────────────────────────────────────────────
 
+export const documentaryCategoriesQuery = defineQuery(`
+  *[_type == "settings"][0].documentaryCategories[] {
+    title,
+    "value": value.current
+  }
+`)
+
 export const documentariesListingQuery = defineQuery(`
-  *[_type == "documentaries"] | order(_createdAt desc) {
+  *[_type == "documentaries" && !(_id in path("drafts.**"))] | order(_createdAt desc) {
     _id,
     name,
     "slug": slug.current,
@@ -222,8 +229,15 @@ export const campaignSlugsQuery = defineQuery(`
 // Same structure as documentaries — includes client on cards.
 // ─────────────────────────────────────────────────────────────
 
+export const animationCategoriesQuery = defineQuery(`
+  *[_type == "settings"][0].animationCategories[] {
+    title,
+    "value": value.current
+  }
+`)
+
 export const animationsListingQuery = defineQuery(`
-  *[_type == "animation"] | order(_createdAt desc) {
+  *[_type == "animation" && !(_id in path("drafts.**"))] | order(_createdAt desc) {
     _id,
     name,
     "slug": slug.current,

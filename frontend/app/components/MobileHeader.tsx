@@ -40,9 +40,9 @@ export default function MobileHeader({logoUrl, contactBlock, menuVideoUrl}: Prop
         </Link>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="text-xs text-white tracking-wide"
+          className="text-[14px] text-white tracking-wide"
         >
-          {open ? 'Close' : 'Menu'}
+          {open ? 'Close [x]' : 'Menu'}
         </button>
       </header>
 
@@ -72,7 +72,7 @@ export default function MobileHeader({logoUrl, contactBlock, menuVideoUrl}: Prop
           </nav>
 
           {contactBlock && (
-            <div className="relative flex flex-col gap-6 text-[13px] text-white/60 mt-auto pr-12">
+            <div className="relative flex flex-col gap-6 text-[14px] text-white/60 mt-auto pr-12">
               {contactBlock.firstColumn && (
                 <PortableText value={contactBlock.firstColumn as Parameters<typeof PortableText>[0]['value']} />
               )}

@@ -45,7 +45,7 @@ export default function Video({block: {url, title, backgroundVideo}}: Props) {
               className="pointer-events-auto text-xs text-white tracking-wide"
               onClick={() => setOpen(false)}
             >
-              Close
+              Close [x]
             </button>
           </div>
           {/* Invisible bar that sits above the header to block it from showing through */}

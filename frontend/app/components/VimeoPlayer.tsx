@@ -162,7 +162,7 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
               {isMuted ? 'Sound OFF' : 'Sound ON'}
             </button>
             <button className="text-[13px] text-white/80" onClick={() => window.history.back()}>
-              Close
+              Close [x]
             </button>
           </div>
         </div>

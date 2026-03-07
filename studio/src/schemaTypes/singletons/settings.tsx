@@ -39,6 +39,74 @@ export const settings = defineType({
       },
     }),
     defineField({
+      name: 'documentaryCategories',
+      title: 'Documentary Categories',
+      description: 'Define up to 3 categories for documentaries. Order here determines the order on the listing page.',
+      type: 'array',
+      of: [
+        defineField({
+          name: 'category',
+          title: 'Category',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Label',
+              type: 'string',
+              description: 'Displayed on the listing page (e.g. "Most Viewed").',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'value',
+              title: 'Slug',
+              type: 'slug',
+              description: 'Internal identifier used to group projects. Auto-generated from the label.',
+              options: {source: 'title'},
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {title: 'title'},
+          },
+        }),
+      ],
+      validation: (Rule) => Rule.max(3).error('You can only have up to 3 documentary categories.'),
+    }),
+    defineField({
+      name: 'animationCategories',
+      title: 'Animation Categories',
+      description: 'Define up to 3 categories for animations. Order here determines the order on the listing page.',
+      type: 'array',
+      of: [
+        defineField({
+          name: 'category',
+          title: 'Category',
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Label',
+              type: 'string',
+              description: 'Displayed on the listing page (e.g. "Most Viewed").',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'value',
+              title: 'Slug',
+              type: 'slug',
+              description: 'Internal identifier used to group projects. Auto-generated from the label.',
+              options: {source: 'title'},
+              validation: (Rule) => Rule.required(),
+            }),
+          ],
+          preview: {
+            select: {title: 'title'},
+          },
+        }),
+      ],
+      validation: (Rule) => Rule.max(3).error('You can only have up to 3 animation categories.'),
+    }),
+    defineField({
       name: 'siteTitle',
       title: 'Site Title',
       description: 'Used in browser tab and search engine results.',
