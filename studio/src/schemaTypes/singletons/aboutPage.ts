@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {DocumentIcon} from '@sanity/icons'
+import {maxVideoSize, maxImageSize} from '../../utils/fileSizeValidation'
 
 /**
  * Animation schema.  Define and edit the fields for the 'project' content type.
@@ -29,17 +30,18 @@ export const aboutPage = defineType({
       type: 'image',
       description: 'Displayed on social cards and search engine results.',
       options: {hotspot: true},
+      validation: (Rule) => Rule.custom(maxImageSize),
     }),
     defineField({
       name: 'backgroundVideo',
       title: 'Looping background video',
       type: 'file',
-      group: 'content',
       description:
         'Short looping video shown before vimeo video. Keep under 10 MB for performance.',
       options: {
         accept: 'video/*',
       },
+      validation: (Rule) => Rule.custom(maxVideoSize),
     }),
     defineField({
       name: 'aboutBuilder',

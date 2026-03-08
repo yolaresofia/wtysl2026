@@ -414,6 +414,14 @@
           },
           "optional": true
         },
+        "url": {
+          "type": "objectAttribute",
+          "value": {
+            "type": "inline",
+            "name": "link"
+          },
+          "optional": true
+        },
         "image": {
           "type": "objectAttribute",
           "value": {
@@ -1200,18 +1208,6 @@
               {
                 "type": "string",
                 "value": "email"
-              },
-              {
-                "type": "string",
-                "value": "documentaries"
-              },
-              {
-                "type": "string",
-                "value": "animation"
-              },
-              {
-                "type": "string",
-                "value": "campaign"
               }
             ]
           },
@@ -1228,30 +1224,6 @@
           "type": "objectAttribute",
           "value": {
             "type": "string"
-          },
-          "optional": true
-        },
-        "documentaries": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "documentaries.reference"
-          },
-          "optional": true
-        },
-        "animation": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "animation.reference"
-          },
-          "optional": true
-        },
-        "campaign": {
-          "type": "objectAttribute",
-          "value": {
-            "type": "inline",
-            "name": "campaign.reference"
           },
           "optional": true
         },
@@ -2514,6 +2486,37 @@
               "value": {
                 "type": "string",
                 "value": "image"
+              }
+            }
+          }
+        },
+        "optional": true
+      },
+      "backgroundVideo": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "object",
+          "attributes": {
+            "asset": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "inline",
+                "name": "sanity.fileAsset.reference"
+              },
+              "optional": true
+            },
+            "media": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "unknown"
+              },
+              "optional": true
+            },
+            "_type": {
+              "type": "objectAttribute",
+              "value": {
+                "type": "string",
+                "value": "file"
               }
             }
           }

@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {maxVideoSize} from '../../utils/fileSizeValidation'
 
 export const campaignSection = defineType({
   name: 'campaignSection',
@@ -16,6 +17,7 @@ export const campaignSection = defineType({
       name: 'backgroundVideo',
       title: 'Background Video',
       type: 'file',
+      validation: (Rule) => Rule.custom(maxVideoSize),
     }),
   ],
   preview: {

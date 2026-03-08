@@ -80,6 +80,7 @@ export type PhotoInfoGalleryItem = {
   name?: string
   role?: string
   location?: string
+  url?: Link
   image?: {
     asset?: SanityImageAssetReference
     media?: unknown
@@ -204,12 +205,9 @@ export type ListingSection = {
 
 export type Link = {
   _type: 'link'
-  linkType?: 'href' | 'email' | 'documentaries' | 'animation' | 'campaign'
+  linkType?: 'href' | 'email'
   href?: string
   email?: string
-  documentaries?: DocumentariesReference
-  animation?: AnimationReference
-  campaign?: CampaignReference
   openInNewTab?: boolean
 }
 
@@ -403,6 +401,11 @@ export type AboutPage = {
     hotspot?: SanityImageHotspot
     crop?: SanityImageCrop
     _type: 'image'
+  }
+  backgroundVideo?: {
+    asset?: SanityFileAssetReference
+    media?: unknown
+    _type: 'file'
   }
   aboutBuilder?: Array<
     | ({
@@ -2218,7 +2221,12 @@ export type AboutPageQueryResult = {
           name: string | null
           role: string | null
           location: string | null
-          url: null
+          url: {
+            linkType: 'email' | 'href' | null
+            href: string | null
+            email: string | null
+            openInNewTab: boolean | null
+          } | null
           image: {
             asset: {
               _id: string
@@ -2304,7 +2312,9 @@ export type AboutPageQueryResult = {
         _key: string
         url: string | null
         title: string | null
-        backgroundVideo: null
+        backgroundVideo: {
+          url: string | null
+        } | null
       }
   > | null
 } | null

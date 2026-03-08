@@ -1,5 +1,6 @@
 import {CogIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
+import {maxVideoSize, maxImageSize} from '../../utils/fileSizeValidation'
 
 export const settings = defineType({
   name: 'settings',
@@ -14,6 +15,7 @@ export const settings = defineType({
       options: {
         hotspot: true,
       },
+      validation: (Rule) => Rule.custom(maxImageSize),
     }),
     defineField({
       name: 'welcomeText',
@@ -28,6 +30,7 @@ export const settings = defineType({
       options: {
         accept: 'video/*',
       },
+      validation: (Rule) => Rule.custom(maxVideoSize),
     }),
     defineField({
       name: 'mobileMenuBackgroundVideo',
@@ -37,6 +40,7 @@ export const settings = defineType({
       options: {
         accept: 'video/*',
       },
+      validation: (Rule) => Rule.custom(maxVideoSize),
     }),
     defineField({
       name: 'documentaryCategories',
@@ -128,6 +132,7 @@ export const settings = defineType({
       options: {
         hotspot: true,
       },
+      validation: (Rule) => Rule.custom(maxImageSize),
       fields: [
         defineField({
           name: 'alt',

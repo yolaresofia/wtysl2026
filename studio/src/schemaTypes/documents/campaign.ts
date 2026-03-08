@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {StackCompactIcon} from '@sanity/icons'
+import {maxVideoSize, maxImageSize} from '../../utils/fileSizeValidation'
 
 export const campaign = defineType({
   name: 'campaign',
@@ -15,7 +16,7 @@ export const campaign = defineType({
       name: 'name',
       title: 'Title',
       type: 'string',
-      group: 'content',
+
       description: 'The campaign title shown on listing cards and the detail page.',
       validation: (Rule) => Rule.required().error('A title is required.'),
     }),
@@ -23,7 +24,7 @@ export const campaign = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      group: 'content',
+
       description: 'Auto-generated from the title. Used in the URL: /campaigns/[slug].',
       validation: (Rule) =>
         Rule.required()
@@ -61,16 +62,18 @@ export const campaign = defineType({
       type: 'image',
       description: 'Displayed on social cards and search engine results.',
       options: {hotspot: true},
+      validation: (Rule) => Rule.custom(maxImageSize),
     }),
     defineField({
       name: 'backgroundVideo',
       title: 'Listing Card Video',
       type: 'file',
-      group: 'content',
+
       description: 'Short looping video shown on the listing card. Keep under 10 MB for performance.',
       options: {
         accept: 'video/*',
       },
+      validation: (Rule) => Rule.custom(maxVideoSize),
     }),
     defineField({
       name: 'campaignBuilder',

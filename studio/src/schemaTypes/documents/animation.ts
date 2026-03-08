@@ -1,6 +1,7 @@
 import {defineField, defineType} from 'sanity'
 import {StackCompactIcon} from '@sanity/icons'
 import {AnimationCategoryInput} from '../../components/CategoryInput'
+import {maxVideoSize, maxImageSize} from '../../utils/fileSizeValidation'
 
 export const animation = defineType({
   name: 'animation',
@@ -16,7 +17,7 @@ export const animation = defineType({
       name: 'name',
       title: 'Title',
       type: 'string',
-      group: 'content',
+
       description: 'The title shown on listing cards and the detail page.',
       validation: (Rule) => Rule.required().error('A title is required.'),
     }),
@@ -24,7 +25,7 @@ export const animation = defineType({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
-      group: 'content',
+
       description: 'Auto-generated from the title. Used in the URL: /animations/[slug].',
       validation: (Rule) =>
         Rule.required()
@@ -62,19 +63,20 @@ export const animation = defineType({
       type: 'image',
       description: 'Displayed on social cards and search engine results.',
       options: {hotspot: true},
+      validation: (Rule) => Rule.custom(maxImageSize),
     }),
     defineField({
       name: 'client',
       title: 'Client',
       type: 'string',
-      group: 'content',
+
       description: 'The client or brand shown on listing cards alongside the title.',
     }),
     defineField({
       name: 'category',
       title: 'Category',
       type: 'string',
-      group: 'content',
+
       description: 'Determines which section this animation appears in on the listing page.',
       components: {
         input: AnimationCategoryInput,
@@ -98,11 +100,12 @@ export const animation = defineType({
       name: 'backgroundVideo',
       title: 'Listing Card Video',
       type: 'file',
-      group: 'content',
+
       description: 'Short looping video shown on the listing card. Keep under 10 MB for performance.',
       options: {
         accept: 'video/*',
       },
+      validation: (Rule) => Rule.custom(maxVideoSize),
     }),
     defineField({
       name: 'animationBuilder',

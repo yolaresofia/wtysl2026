@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {ImageIcon, VideoIcon} from '@sanity/icons'
+import {maxImageSize} from '../../utils/fileSizeValidation'
 
 export const galleryItem = defineType({
   name: 'galleryItem',
@@ -26,6 +27,7 @@ export const galleryItem = defineType({
       type: 'image',
       options: {hotspot: true},
       hidden: ({parent}) => parent?.type === 'video',
+      validation: (Rule) => Rule.custom(maxImageSize),
     }),
     defineField({
       name: 'photoAltText',
@@ -40,6 +42,7 @@ export const galleryItem = defineType({
       description: 'Cover image displayed before the video plays',
       options: {hotspot: true},
       hidden: ({parent}) => parent?.type !== 'video',
+      validation: (Rule) => Rule.custom(maxImageSize),
     }),
     defineField({
       name: 'videoAltText',

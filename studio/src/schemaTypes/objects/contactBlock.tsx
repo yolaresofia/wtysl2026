@@ -1,5 +1,6 @@
 import {EnvelopeIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
+import {maxVideoSize} from '../../utils/fileSizeValidation'
 
 // studio/src/schemaTypes/objects/contactBlock.tsx
 export const contactBlock = defineType({
@@ -22,6 +23,7 @@ export const contactBlock = defineType({
       type: 'file',
       options: {accept: 'video/*'},
       hidden: ({parent}) => parent?.backgroundType !== 'video',
+      validation: (Rule) => Rule.custom(maxVideoSize),
     }),
     defineField({
       name: 'backgroundColor',

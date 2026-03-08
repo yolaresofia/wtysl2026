@@ -1,5 +1,6 @@
 import {defineField, defineType} from 'sanity'
 import {UserIcon} from '@sanity/icons'
+import {maxImageSize} from '../../utils/fileSizeValidation'
 
 export const logoSectionItem = defineType({
   name: 'logoSectionItem',
@@ -17,6 +18,7 @@ export const logoSectionItem = defineType({
       title: 'Logo',
       type: 'image',
       options: {hotspot: true},
+      validation: (Rule) => Rule.custom(maxImageSize),
     }),
   ],
   preview: {
