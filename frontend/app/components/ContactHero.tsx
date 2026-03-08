@@ -1,6 +1,7 @@
 'use client'
 
-import {useEffect, useRef} from 'react'
+import {useRef} from 'react'
+import {useGSAP} from '@gsap/react'
 import gsap from 'gsap'
 import {PortableText} from 'next-sanity'
 import type {ContactBuilderBlock} from '@/sanity/lib/types'
@@ -11,50 +12,49 @@ type Props = {
 
 export const ContactHero = ({block}: Props) => {
   const {backgroundType, backgroundVideo, backgroundColor, centerText, hoverCenterText, firstColumn, secondColumn, thirdColumn} = block
+  const containerRef = useRef<HTMLDivElement>(null)
   const centerRef = useRef<HTMLSpanElement>(null)
   const hoverCenterRef = useRef<HTMLSpanElement>(null)
   const parentTargetRef = useRef<HTMLSpanElement>(null)
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!window.matchMedia('(hover: hover)').matches) return
-    const ctx = gsap.context(() => {
-      gsap.set(hoverCenterRef.current, {yPercent: 100, autoAlpha: 0})
-      const el = parentTargetRef.current
-      if (!el) return
-      el.addEventListener('mouseenter', () => {
-        gsap.to(centerRef.current, {
-          yPercent: -100,
-          autoAlpha: 0,
-          duration: 0.3,
-          ease: 'power2.out',
-        })
-        gsap.to(hoverCenterRef.current, {
-          yPercent: 0,
-          autoAlpha: 1,
-          duration: 0.3,
-          ease: 'power2.out',
-        })
+    gsap.set(hoverCenterRef.current, {yPercent: 100, autoAlpha: 0})
+    const el = parentTargetRef.current
+    if (!el) return
+    el.addEventListener('mouseenter', () => {
+      gsap.to(centerRef.current, {
+        yPercent: -100,
+        autoAlpha: 0,
+        duration: 0.3,
+        ease: 'power2.out',
       })
-      el.addEventListener('mouseleave', () => {
-        gsap.to(centerRef.current, {
-          yPercent: 0,
-          autoAlpha: 1,
-          duration: 0.3,
-          ease: 'power2.out',
-        })
-        gsap.to(hoverCenterRef.current, {
-          yPercent: 100,
-          autoAlpha: 0,
-          duration: 0.3,
-          ease: 'power2.out',
-        })
+      gsap.to(hoverCenterRef.current, {
+        yPercent: 0,
+        autoAlpha: 1,
+        duration: 0.3,
+        ease: 'power2.out',
       })
     })
-    return () => ctx.revert()
-  }, [])
+    el.addEventListener('mouseleave', () => {
+      gsap.to(centerRef.current, {
+        yPercent: 0,
+        autoAlpha: 1,
+        duration: 0.3,
+        ease: 'power2.out',
+      })
+      gsap.to(hoverCenterRef.current, {
+        yPercent: 100,
+        autoAlpha: 0,
+        duration: 0.3,
+        ease: 'power2.out',
+      })
+    })
+  }, {scope: containerRef})
 
   return (
     <div
+      ref={containerRef}
       className="w-full h-dvh flex flex-col text-white relative overflow-hidden"
       style={{backgroundColor: backgroundColor ?? undefined}}
     >

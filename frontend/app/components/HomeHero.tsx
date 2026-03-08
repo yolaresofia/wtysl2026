@@ -1,6 +1,7 @@
 'use client'
 
-import {useEffect, useRef} from 'react'
+import {useRef} from 'react'
+import {useGSAP} from '@gsap/react'
 import {useRouter} from 'next/navigation'
 import Image from 'next/image'
 import { Link } from 'next-view-transitions'
@@ -17,46 +18,40 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
   const welcomeRef = useRef<HTMLParagraphElement>(null)
   const headerRef = useRef<HTMLElement>(null)
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
+  useGSAP(() => {
+    gsap.set(welcomeRef.current, {autoAlpha: 0})
+    gsap.set(headerRef.current, {autoAlpha: 0})
 
-    const ctx = gsap.context(() => {
-      gsap.set(welcomeRef.current, {autoAlpha: 0})
-      gsap.set(headerRef.current, {autoAlpha: 0})
-
-      gsap.timeline({delay: 1.5})
-        .to(topRef.current, {
-          yPercent: -100,
-          duration: 1.4,
-          ease: 'power2.inOut',
-        })
-        .to(bottomRef.current, {
-          yPercent: 100,
-          duration: 1.4,
-          ease: 'power2.inOut',
-        }, '<')
-        .to(welcomeRef.current, {
-          autoAlpha: 1,
-          duration: 0.8,
-          ease: 'power2.out',
-        }, '-=0.4')
-        .to(headerRef.current, {
-          autoAlpha: 1,
-          duration: 0.8,
-          ease: 'power2.out',
-        }, '<')
-        .to([welcomeRef.current, headerRef.current], {
-          autoAlpha: 0,
-          duration: 0.8,
-          ease: 'power2.inOut',
-          delay: 4,
-          onComplete: () => {
-            router.replace('/documentaries')
-          },
-        })
-    })
-
-    return () => ctx.revert()
+    gsap.timeline({delay: 1.5})
+      .to(topRef.current, {
+        yPercent: -100,
+        duration: 1.4,
+        ease: 'power2.inOut',
+      })
+      .to(bottomRef.current, {
+        yPercent: 100,
+        duration: 1.4,
+        ease: 'power2.inOut',
+      }, '<')
+      .to(welcomeRef.current, {
+        autoAlpha: 1,
+        duration: 0.8,
+        ease: 'power2.out',
+      }, '-=0.4')
+      .to(headerRef.current, {
+        autoAlpha: 1,
+        duration: 0.8,
+        ease: 'power2.out',
+      }, '<')
+      .to([welcomeRef.current, headerRef.current], {
+        autoAlpha: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+        delay: 4,
+        onComplete: () => {
+          router.replace('/documentaries')
+        },
+      })
   }, [router])
 
   const logoUrl = logo?.asset?.url

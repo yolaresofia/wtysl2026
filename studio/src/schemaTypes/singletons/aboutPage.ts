@@ -31,6 +31,17 @@ export const aboutPage = defineType({
       options: {hotspot: true},
     }),
     defineField({
+      name: 'backgroundVideo',
+      title: 'Looping background video',
+      type: 'file',
+      group: 'content',
+      description:
+        'Short looping video shown before vimeo video. Keep under 10 MB for performance.',
+      options: {
+        accept: 'video/*',
+      },
+    }),
+    defineField({
       name: 'aboutBuilder',
       title: 'About builder',
       type: 'array',

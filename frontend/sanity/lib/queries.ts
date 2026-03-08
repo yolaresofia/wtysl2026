@@ -74,6 +74,7 @@ const pageBuilderFragment = /* groq */ `[]{
       name,
       role,
       location,
+      "url": url{linkType, href, email, openInNewTab},
       image ${imageFragment}
     }
   },

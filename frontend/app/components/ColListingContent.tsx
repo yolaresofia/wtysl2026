@@ -2,6 +2,7 @@
 
 import { Link } from 'next-view-transitions'
 import {gsap} from 'gsap'
+import {useGSAP} from '@gsap/react'
 import {useEffect, useRef, useState} from 'react'
 
 type ColListingItem = {
@@ -17,10 +18,10 @@ export const ColListingContent = ({items}: {items: ColListingItem[]}) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const mobileVideoContainerRef = useRef<HTMLDivElement>(null)
   const mobileScrollRef = useRef<HTMLDivElement>(null)
-  const mobileActiveIdRef = useRef<string | null>(items[0]?._id ?? null)
+  const mobileActiveIndexRef = useRef<number>(0)
 
-  // Desktop: init videos
-  useEffect(() => {
+  // Desktop: init video visibility with GSAP
+  useGSAP(() => {
     if (!containerRef.current) return
     const videos = containerRef.current.querySelectorAll<HTMLVideoElement>('video[data-id]')
     videos.forEach((v) => {
@@ -28,43 +29,46 @@ export const ColListingContent = ({items}: {items: ColListingItem[]}) => {
       gsap.set(v, {autoAlpha: isFirst ? 1 : 0})
       if (isFirst) v.play().catch(() => {})
     })
+  }, {scope: containerRef, dependencies: [items]})
+
+  // Mobile: init first video visible, rest hidden
+  useEffect(() => {
+    if (!mobileVideoContainerRef.current) return
+    const videos = mobileVideoContainerRef.current.querySelectorAll<HTMLVideoElement>('video[data-id]')
+    videos.forEach((v, i) => {
+      v.style.opacity = i === 0 ? '1' : '0'
+      v.style.transition = 'opacity 0.5s ease'
+      if (i === 0) v.play().catch(() => {})
+    })
+    mobileActiveIndexRef.current = 0
   }, [items])
 
-  const mobileCrossfadeTo = (id: string) => {
-    if (!mobileVideoContainerRef.current) return
-    if (mobileActiveIdRef.current === id) return
-    const next = mobileVideoContainerRef.current.querySelector<HTMLVideoElement>(`video[data-id="${id}"]`)
-    if (!next) return
-    next.play().catch(() => {})
-    gsap.killTweensOf(next)
-    gsap.fromTo(next, {autoAlpha: 0}, {autoAlpha: 1, duration: 0.6, ease: 'power2.inOut'})
-    mobileActiveIdRef.current = id
-  }
-
-  // Mobile: init videos + IntersectionObserver for snap detection
+  // Mobile: scroll listener — switch video when snap position changes
   useEffect(() => {
-    if (!mobileVideoContainerRef.current || !mobileScrollRef.current) return
+    const scrollEl = mobileScrollRef.current
+    if (!scrollEl) return
 
-    const videos = mobileVideoContainerRef.current.querySelectorAll<HTMLVideoElement>('video[data-id]')
-    videos.forEach((v) => {
-      const isFirst = v.dataset.id === items[0]?._id
-      gsap.set(v, {autoAlpha: isFirst ? 1 : 0})
-      if (isFirst) v.play().catch(() => {})
-    })
+    const onScroll = () => {
+      const slideHeight = scrollEl.clientHeight
+      if (!slideHeight) return
+      const index = Math.round(scrollEl.scrollTop / slideHeight)
+      if (index === mobileActiveIndexRef.current) return
+      mobileActiveIndexRef.current = index
 
-    const slides = mobileScrollRef.current.querySelectorAll<HTMLElement>('[data-slide-id]')
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            mobileCrossfadeTo((entry.target as HTMLElement).dataset.slideId!)
-          }
-        })
-      },
-      {root: mobileScrollRef.current, threshold: 0.5},
-    )
-    slides.forEach((slide) => observer.observe(slide))
-    return () => observer.disconnect()
+      const videos = mobileVideoContainerRef.current?.querySelectorAll<HTMLVideoElement>('video[data-id]')
+      if (!videos) return
+      videos.forEach((v, i) => {
+        if (i === index) {
+          v.style.opacity = '1'
+          v.play().catch(() => {})
+        } else {
+          v.style.opacity = '0'
+        }
+      })
+    }
+
+    scrollEl.addEventListener('scroll', onScroll, {passive: true})
+    return () => scrollEl.removeEventListener('scroll', onScroll)
   }, [items])
 
   const crossfadeTo = (id: string) => {
@@ -138,6 +142,7 @@ export const ColListingContent = ({items}: {items: ColListingItem[]}) => {
                 muted
                 loop
                 playsInline
+                preload="metadata"
               />
             ) : null,
           )}

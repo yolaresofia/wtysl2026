@@ -2,6 +2,7 @@
 
 import { Link } from 'next-view-transitions'
 import {gsap} from 'gsap'
+import {useGSAP} from '@gsap/react'
 import {useEffect, useRef, useState} from 'react'
 
 type RowsListingItem = {
@@ -61,13 +62,13 @@ export const RowsListingContent = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const mobileVideoContainerRef = useRef<HTMLDivElement>(null)
   const mobileScrollRef = useRef<HTMLDivElement>(null)
-  const mobileActiveIdRef = useRef<string | null>(firstItem?._id ?? null)
+  const mobileActiveIndexRef = useRef<number>(0)
 
   const [viewAll, setViewAll] = useState(false)
   const [activeCategory, setActiveCategory] = useState<string | null>(firstItem?.category ?? null)
 
-  // Desktop: init videos
-  useEffect(() => {
+  // Desktop: init video visibility with GSAP
+  useGSAP(() => {
     if (!containerRef.current) return
     const videos = containerRef.current.querySelectorAll<HTMLVideoElement>('video[data-id]')
     videos.forEach((v) => {
@@ -75,45 +76,51 @@ export const RowsListingContent = ({
       gsap.set(v, {autoAlpha: isFirst ? 1 : 0})
       if (isFirst) v.play().catch(() => {})
     })
+  }, {scope: containerRef, dependencies: [items]})
+
+  // Mobile: init first video visible, rest hidden
+  useEffect(() => {
+    if (!mobileVideoContainerRef.current) return
+    const videos = mobileVideoContainerRef.current.querySelectorAll<HTMLVideoElement>('video[data-id]')
+    videos.forEach((v, i) => {
+      v.style.opacity = i === 0 ? '1' : '0'
+      v.style.transition = 'opacity 0.5s ease'
+      if (i === 0) v.play().catch(() => {})
+    })
+    mobileActiveIndexRef.current = 0
   }, [items])
 
-  const mobileCrossfadeTo = (id: string) => {
-    if (!mobileVideoContainerRef.current) return
-    if (mobileActiveIdRef.current === id) return
-    const next = mobileVideoContainerRef.current.querySelector<HTMLVideoElement>(`video[data-id="${id}"]`)
-    if (!next) return
-    next.play().catch(() => {})
-    gsap.killTweensOf(next)
-    gsap.fromTo(next, {autoAlpha: 0}, {autoAlpha: 1, duration: 0.6, ease: 'power2.inOut'})
-    mobileActiveIdRef.current = id
-  }
-
-  // Mobile: init videos + IntersectionObserver for snap + category detection
+  // Mobile: scroll listener — switch video when snap position changes
   useEffect(() => {
-    if (!mobileVideoContainerRef.current || !mobileScrollRef.current) return
+    const scrollEl = mobileScrollRef.current
+    if (!scrollEl) return
 
-    const videos = mobileVideoContainerRef.current.querySelectorAll<HTMLVideoElement>('video[data-id]')
-    videos.forEach((v) => {
-      const isFirst = v.dataset.id === firstItem?._id
-      gsap.set(v, {autoAlpha: isFirst ? 1 : 0})
-      if (isFirst) v.play().catch(() => {})
-    })
+    const onScroll = () => {
+      const slideHeight = scrollEl.clientHeight
+      if (!slideHeight) return
+      const index = Math.round(scrollEl.scrollTop / slideHeight)
+      if (index === mobileActiveIndexRef.current) return
+      mobileActiveIndexRef.current = index
 
-    const slideEls = mobileScrollRef.current.querySelectorAll<HTMLElement>('[data-slide-id]')
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const el = entry.target as HTMLElement
-            mobileCrossfadeTo(el.dataset.slideId!)
-            if (el.dataset.category) setActiveCategory(el.dataset.category)
-          }
-        })
-      },
-      {root: mobileScrollRef.current, threshold: 0.5},
-    )
-    slideEls.forEach((slide) => observer.observe(slide))
-    return () => observer.disconnect()
+      const videos = mobileVideoContainerRef.current?.querySelectorAll<HTMLVideoElement>('video[data-id]')
+      if (!videos) return
+      videos.forEach((v, i) => {
+        if (i === index) {
+          v.style.opacity = '1'
+          v.play().catch(() => {})
+        } else {
+          v.style.opacity = '0'
+        }
+      })
+
+      // Update active category label
+      const slideEls = scrollEl.querySelectorAll<HTMLElement>('[data-slide-id]')
+      const activeSlide = slideEls[index]
+      if (activeSlide?.dataset.category) setActiveCategory(activeSlide.dataset.category)
+    }
+
+    scrollEl.addEventListener('scroll', onScroll, {passive: true})
+    return () => scrollEl.removeEventListener('scroll', onScroll)
   }, [items])
 
   const crossfadeTo = (id: string) => {
@@ -157,8 +164,7 @@ export const RowsListingContent = ({
               <div
                 className="grid grid-cols-5 gap-18 w-11/12 pl-8"
                 onMouseLeave={() => {
-                  const firstId = items[0]?._id
-                  if (firstId) crossfadeTo(firstId)
+                  if (firstItem) crossfadeTo(firstItem._id)
                   setHoveredId(null)
                 }}
               >
@@ -196,14 +202,14 @@ export const RowsListingContent = ({
                 muted
                 loop
                 playsInline
-                preload="none"
+                preload="metadata"
               />
             ) : null,
           )}
         </div>
 
         <div className="absolute top-0 inset-x-0 z-35 flex items-center justify-between px-5 pt-28 pb-3 pointer-events-none">
-          <span className="text-xs uppercase tracking-widest text-white/60">Documentaries</span>
+          <span className="text-xs uppercase tracking-widest text-white/60">{basePath}</span>
           <button
             className="text-[14px] text-white pointer-events-auto"
             onClick={() => setViewAll((v) => !v)}

@@ -24,7 +24,7 @@ export default function LogoSection({block: {backgroundColor, title, items}}: Pr
     >
       <p className="text-[13px] text-white shrink-0 leading-none">{title}</p>
       <div
-        className="grid gap-y-8 gap-x-4 flex-1"
+        className="grid gap-y-8 md:gap-x-18 gap-x-2 flex-1"
         style={{gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))'}}
       >
         {validItems.map((item) => (
@@ -34,7 +34,7 @@ export default function LogoSection({block: {backgroundColor, title, items}}: Pr
               alt={item.altText ?? ''}
               width={80}
               height={36}
-              className="w-auto h-6 object-contain"
+              className="w-auto md:h-9 h-6 object-contain"
             />
           </div>
         ))}

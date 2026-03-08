@@ -1,5 +1,6 @@
 import {ExtractBlock} from '@/sanity/lib/types'
 import {AnyBuilderBlock} from './BlockRenderer'
+import LinkResolver from './LinkResolver'
 
 type Props = {
   block: ExtractBlock<AnyBuilderBlock, 'photoInfoGallery'>
@@ -18,7 +19,9 @@ export default function PhotoInfoGallery({block}: Props) {
                 className="w-full aspect-4/3 bg-cover bg-center"
                 style={{backgroundImage: `url(${item.image?.asset?.url ?? ''})`}}
               />
-              <p className="text-lg pt-4">{item.name}</p>
+              <LinkResolver link={item.url} className="text-lg pt-4 cursor-pointer">
+                <p className="text-lg pt-4">{item.name}</p>
+              </LinkResolver>
               <p className="text-[13px]">{item.role}</p>
               <p className="text-[13px] pt-6">⚲ {item.location}</p>
             </div>

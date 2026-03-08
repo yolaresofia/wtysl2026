@@ -25,6 +25,12 @@ export const photoInfoGalleryItem = defineType({
       description: 'City or country.',
     }),
     defineField({
+      name: 'url',
+      title: 'URL',
+      type: 'link',
+      description: 'Website or profile URL.',
+    }),
+    defineField({
       name: 'image',
       title: 'Photo',
       type: 'image',

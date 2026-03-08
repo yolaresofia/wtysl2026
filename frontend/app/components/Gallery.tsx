@@ -2,7 +2,7 @@
 import {ExtractBlock} from '@/sanity/lib/types'
 import {AnyBuilderBlock} from './BlockRenderer'
 import Image from 'next/image'
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import VimeoPlayer from './VimeoPlayer'
 
 type Props = {
@@ -13,6 +13,7 @@ export default function Gallery({block: {items, backgroundColor}}: Props) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const selectedItem = selectedIndex !== null ? (items?.[selectedIndex] ?? null) : null
   const itemCount = items?.length ?? 0
+  const cursorRef = useRef<HTMLSpanElement>(null)
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -50,16 +51,33 @@ export default function Gallery({block: {items, backgroundColor}}: Props) {
   }, [selectedItem])
 
   return (
-    <div>
+    <div className="relative">
+      {/* Custom cursor label — fixed to viewport, follows mouse over video items */}
+      <span
+        ref={cursorRef}
+        className="fixed z-50 pointer-events-none text-white text-xs tracking-widest -translate-x-1/2 -translate-y-1/2 hidden"
+        style={{top: 0, left: 0}}
+      >
+        watch video
+      </span>
+
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
         {items?.map((item, index) => {
           const src = item.type === 'photo' ? (item.imageUrl ?? '') : (item.thumbnailUrl ?? '')
           const alt = item.type === 'photo' ? (item.photoAltText ?? '') : (item.videoAltText ?? '')
+          const isVideo = item.type === 'video'
           return (
             <div
               key={item._key}
-              className="relative aspect-4/3 cursor-pointer overflow-hidden"
+              className={`relative aspect-4/3 overflow-hidden ${isVideo ? 'cursor-none' : 'cursor-pointer'}`}
               onClick={() => setSelectedIndex(index)}
+              onMouseMove={isVideo ? (e) => {
+                if (!cursorRef.current) return
+                cursorRef.current.style.left = `${e.clientX}px`
+                cursorRef.current.style.top = `${e.clientY}px`
+              } : undefined}
+              onMouseEnter={isVideo ? () => cursorRef.current?.classList.remove('hidden') : undefined}
+              onMouseLeave={isVideo ? () => cursorRef.current?.classList.add('hidden') : undefined}
             >
               <Image src={src} alt={alt} fill className="object-cover" />
             </div>
