@@ -333,3 +333,134 @@ useGSAP(() => {
 4. **Not registering plugins** — `gsap.registerPlugin(ScrollTrigger)` must be called before any ScrollTrigger animations. Put it at the top of the file, outside the component.
 
 5. **Animating too many properties at once** — start with `y` + `opacity`, which covers 90% of cases. Add `scale`, `rotation`, or `x` only when needed.
+
+---
+
+## Pattern: Column Stagger Rows (Looping)
+
+**When to use:** Grid listings where items are grouped by category in rows, and each column staggers in from bottom, holds, then exits upward. Loops through content sets. Used in the `RowsListingContent` component for the desktop work/project listing.
+
+**CRITICAL — This is a 3-phase animation. Never implement only the entrance. All three phases are mandatory:**
+1. **ENTER** — columns stagger in from `y: "100%"` to `y: "0%"` (bottom to natural position)
+2. **HOLD** — content stays visible for a set duration
+3. **EXIT** — columns stagger out from `y: "0%"` to `y: "-100%"` (natural position to above, same upward direction as enter)
+
+The enter and exit must use the **same duration, same stagger, and same ease**. The exit direction is **always upward** (continuing the same direction as the entrance, NOT reversing back down). If you only implement the entrance without the hold and exit, the animation is broken and incomplete.
+
+**Where it lives:** `frontend/components/RowsListingContent.tsx` — the desktop `<div ref={containerRef}>` section that renders `orderedCategories.map(...)`.
+
+**How it works:** Inside the existing `useGSAP` hook (or a new one), target each `<section>` group's grid children. Each column staggers in from `y: "100%"`, holds visible, then exits to `y: "-100%"`. After exit completes, swap to the next content set and repeat.
+
+### Implementation in RowsListingContent
+
+Add a looping entrance/exit animation to the desktop category grid. The animation targets the `<Link>` items inside each category's grid. All items across all rows animate together, staggered by their column position (left to right).
+
+```tsx
+// Inside RowsListingContent, add this ref and state
+const desktopGridRef = useRef<HTMLDivElement>(null);
+
+// Add this useGSAP hook for the stagger animation
+useGSAP(() => {
+  if (!desktopGridRef.current) return;
+
+  // Select all link items across all category rows
+  const allItems = desktopGridRef.current.querySelectorAll(".grid-item");
+  if (!allItems.length) return;
+
+  // Group items by their column index (0-4 in a 5-col grid)
+  // Items in the same column get the same delay
+  const tl = gsap.timeline({ repeat: -1 }); // repeat: -1 = loop forever
+
+  // ENTER — stagger columns from bottom
+  tl.from(allItems, {
+    y: "100%",              // Start below the overflow container
+    opacity: 0,
+    duration: 0.8,          // Each column takes 0.8s to enter
+    stagger: {
+      each: 0.15,           // 0.15s delay between each item
+      grid: "auto",         // GSAP auto-detects the grid layout
+      from: "start",        // Left to right
+    },
+    ease: "power3.out",
+  })
+  // HOLD — content stays visible
+  .to({}, { duration: 2.5 })
+  // EXIT — stagger columns upward (same direction as enter)
+  .to(allItems, {
+    y: "-100%",             // Slide up and out
+    opacity: 0,
+    duration: 0.8,
+    stagger: {
+      each: 0.15,
+      grid: "auto",
+      from: "start",
+    },
+    ease: "power3.out",
+  });
+}, { scope: desktopGridRef });
+```
+
+### Required markup changes
+
+Wrap the category sections in a ref'd container, add `overflow-hidden` to each grid, and add `grid-item` class to each Link:
+
+```tsx
+{/* Wrap in ref container */}
+<div ref={desktopGridRef} className="relative z-10 w-full flex flex-col-reverse gap-20">
+  {orderedCategories.map((category) => (
+    <section className="flex w-full text-[13px]" key={category}>
+      <p className="w-1/12 text-white opacity-80">
+        {categoryLabels[category] ?? category}
+      </p>
+      {/* Add overflow-hidden to clip the animation */}
+      <div
+        className="grid grid-cols-5 gap-18 w-11/12 pl-8 overflow-hidden"
+        onMouseLeave={() => {
+          if (firstItem) crossfadeTo(firstItem._id);
+          setHoveredId(null);
+        }}
+      >
+        {grouped[category].map((item) => (
+          <Link
+            href={item.slug ? `/${basePath}/${item.slug}` : '#'}
+            key={item._id}
+            className={`grid-item ${hoveredId === item._id ? 'text-white' : 'text-white/60'}`}
+            onMouseEnter={() => {
+              crossfadeTo(item._id);
+              setHoveredId(item._id);
+            }}
+          >
+            <p className="text-xl">{item.name}</p>
+            <p className="text-[13px]">{item.client}</p>
+          </Link>
+        ))}
+      </div>
+    </section>
+  ))}
+</div>
+```
+
+### Tunable values
+
+| Property | Value | Effect |
+|----------|-------|--------|
+| `duration` | `0.8` | How long each column takes to enter/exit |
+| `stagger.each` | `0.15` | Delay between columns (smaller = faster wave) |
+| Hold `.to({}, { duration })` | `2.5` | How long content stays visible |
+| `ease` | `"power3.out"` | Smooth deceleration. Try `"expo.out"` for dramatic |
+
+### Presets tested in playground
+
+- **Doity-style**: duration 0.8, stagger 0.15, ease power3.out, hold 2.5s
+- **Cinematic**: duration 1.2, stagger 0.25, ease expo.out, hold 3.0s
+- **Snappy**: duration 0.45, stagger 0.07, ease circ.out, hold 1.5s
+- **Bouncy**: duration 0.9, stagger 0.12, ease back.out(1.7), hold 2.0s
+
+### Notes
+
+- **The timeline MUST have three `.to()` calls: enter, hold, exit.** If you only write the enter, the animation is incomplete. The exit slides items to `y: "-100%"` (upward), never back to `y: "100%"` (downward).
+- The animation only applies to the **desktop** layout (`hidden lg:flex`). Mobile uses snap scrolling with video crossfade instead.
+- `overflow-hidden` on the grid container is critical — without it the sliding text is visible outside its bounds.
+- The `repeat: -1` on the timeline makes it loop. Remove it for a one-shot entrance-hold-exit.
+- If content sets change (different items per cycle), manage `setIndex` state and swap items in `onComplete` callback instead of `repeat: -1`. See the GSAP code output from the playground for that pattern.
+- The video crossfade (`crossfadeTo`) should stay independent of this animation — it's driven by hover, not by the stagger timeline.

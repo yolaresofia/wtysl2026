@@ -8,7 +8,7 @@ type Props = {
 
 export default function TextWithBackgroundColor({block}: Props) {
   return (
-    <div className="md:h-screen h-[160vh] flex justify-center items-center md:px-9 px-5 text-white text-[17px] leading-normal" style={{backgroundColor: block.backgroundColor}}>
+    <div className="md:h-screen py-32 flex justify-center items-center md:px-9 px-5 text-white text-[17px] leading-normal" style={{backgroundColor: block.backgroundColor}}>
       <PortableText value={block.about || []} />
     </div>
   )

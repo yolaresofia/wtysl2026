@@ -1,6 +1,6 @@
 'use client'
 
-import { Link } from 'next-view-transitions'
+import { Link, useTransitionRouter } from 'next-view-transitions'
 import {gsap} from 'gsap'
 import {useGSAP} from '@gsap/react'
 import {useEffect, useRef, useState} from 'react'
@@ -28,6 +28,7 @@ export const RowsListingContent = ({
   categories: Category[]
   basePath: string
 }) => {
+  const router = useTransitionRouter()
   // Build label lookup from categories prop
   const categoryLabels: Record<string, string> = {}
   categories.forEach((c) => {
@@ -57,6 +58,7 @@ export const RowsListingContent = ({
   // First item in display order (used for initial video + category state)
   const firstItem = slides[0] ?? null
 
+  const isExitingRef = useRef(false)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const activeIdRef = useRef<string | null>(firstItem?._id ?? null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -66,17 +68,51 @@ export const RowsListingContent = ({
 
   const [viewAll, setViewAll] = useState(false)
   const [activeCategory, setActiveCategory] = useState<string | null>(firstItem?.category ?? null)
+  const exitColsRef = useRef<HTMLElement[]>([])
 
-  // Desktop: init video visibility with GSAP
+  // Desktop: init video visibility + entrance animation
   useGSAP(() => {
     if (!containerRef.current) return
+
+    // Videos
     const videos = containerRef.current.querySelectorAll<HTMLVideoElement>('video[data-id]')
     videos.forEach((v) => {
       const isFirst = v.dataset.id === firstItem?._id
       gsap.set(v, {autoAlpha: isFirst ? 1 : 0})
       if (isFirst) v.play().catch(() => {})
     })
-  }, {scope: containerRef, dependencies: [items]})
+
+    // Capture cols into a stable ref so navigateWithExit can use them
+    const cols = Array.from(containerRef.current.querySelectorAll<HTMLElement>('[data-exit-col]'))
+    exitColsRef.current = cols
+
+    // Set initial state hidden
+    gsap.set(cols, { y: '100%', opacity: 0 })
+
+    const gridCols = 5
+    const buttons = cols.filter((el) => el.tagName === 'BUTTON')
+    const labels = cols.filter((el) => el.tagName === 'P')
+
+    // Animate category labels first, then buttons col by col — delay gives page time to settle
+    gsap.to(labels, {
+      y: '0%',
+      opacity: 1,
+      duration: 0.9,
+      ease: 'power3.out',
+      delay: 0.2,
+    })
+
+    for (let col = 0; col < gridCols; col++) {
+      const colButtons = buttons.filter((_, i) => i % gridCols === col)
+      gsap.to(colButtons, {
+        y: '0%',
+        opacity: 1,
+        duration: 0.9,
+        ease: 'power3.out',
+        delay: 0.2 + (col + 1) * 0.08,
+      })
+    }
+  }, {dependencies: [items]})
 
   // Mobile: init first video visible, rest hidden
   useEffect(() => {
@@ -123,6 +159,22 @@ export const RowsListingContent = ({
     return () => scrollEl.removeEventListener('scroll', onScroll)
   }, [items])
 
+  const navigateWithExit = (href: string) => {
+    if (isExitingRef.current) return
+    isExitingRef.current = true
+    const cols = Array.from(containerRef.current?.querySelectorAll<HTMLElement>('[data-exit-col]') ?? [])
+    if (!cols.length) { router.push(href); return }
+    gsap.killTweensOf(cols)
+    gsap.set(cols, { y: '0%', opacity: 1 })
+    gsap.to(cols, {
+      y: '-100%',
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power3.in',
+      onComplete: () => { router.push(href) },
+    })
+  }
+
   const crossfadeTo = (id: string) => {
     if (!containerRef.current) return
     if (activeIdRef.current === id) return
@@ -160,27 +212,30 @@ export const RowsListingContent = ({
         <div className="relative z-10 w-full flex flex-col-reverse gap-20">
           {orderedCategories.map((category) => (
             <section className="flex w-full text-[13px]" key={category}>
-              <p className="w-1/12 text-white opacity-80">{categoryLabels[category] ?? category}</p>
+              <p className="w-1/12 text-white opacity-0 translate-y-full" data-exit-col>{categoryLabels[category] ?? category}</p>
               <div
                 className="grid grid-cols-5 gap-18 w-11/12 pl-8"
                 onMouseLeave={() => {
+                  if (isExitingRef.current) return
                   if (firstItem) crossfadeTo(firstItem._id)
                   setHoveredId(null)
                 }}
               >
                 {grouped[category].map((item) => (
-                  <Link
-                    href={item.slug ? `/${basePath}/${item.slug}` : '#'}
+                  <button
                     key={item._id}
-                    className={hoveredId === item._id ? 'text-white' : 'text-white/60'}
+                    className={`text-left opacity-0 translate-y-full ${hoveredId === item._id ? 'text-white' : 'text-white/60'}`}
+                    data-exit-col
                     onMouseEnter={() => {
+                      if (isExitingRef.current) return
                       crossfadeTo(item._id)
                       setHoveredId(item._id)
                     }}
+                    onClick={() => navigateWithExit(item.slug ? `/${basePath}/${item.slug}` : '#')}
                   >
                     <p className="text-xl">{item.name}</p>
                     <p className="text-[13px]">{item.client}</p>
-                  </Link>
+                  </button>
                 ))}
               </div>
             </section>
