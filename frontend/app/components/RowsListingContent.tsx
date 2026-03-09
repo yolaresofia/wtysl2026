@@ -291,7 +291,7 @@ export const RowsListingContent = ({
               data-category={item.category ?? ''}
               className="flex flex-col h-dvh w-full snap-start justify-center px-5"
             >
-              <p className="text-3xl text-white">{item.name}</p>
+              <p className="md:text-3xl text-[22px] text-white">{item.name}</p>
               {item.client && <p className="text-[14px] text-white">{item.client}</p>}
             </Link>
           ))}

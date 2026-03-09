@@ -1,6 +1,6 @@
 import type {Metadata} from 'next'
 import {sanityFetch} from '@/sanity/lib/live'
-import { settingsQuery } from '@/sanity/lib/queries'
+import { settingsQuery, contactColumnsQuery } from '@/sanity/lib/queries'
 import { HomeHero } from './components/HomeHero'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,13 +15,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const {data} = await sanityFetch({
-    query: settingsQuery,
-    // Metadata should never contain stega
-    stega: false,
-  })
-    if (!data) return null
+  const [{data}, {data: contact}] = await Promise.all([
+    sanityFetch({query: settingsQuery, stega: false}),
+    sanityFetch({query: contactColumnsQuery}),
+  ])
+  if (!data) return null
+  const menuVideoUrl = (data.mobileMenuBackgroundVideo as {url?: string | null} | null)?.url ?? null
   return (
-    <HomeHero {...data} />
+    <HomeHero {...data} contactBlock={contact?.contactBlock ?? null} menuVideoUrl={menuVideoUrl} />
   )
 }

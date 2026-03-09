@@ -1,18 +1,33 @@
 'use client'
 
-import {useRef} from 'react'
+import {useRef, useState} from 'react'
 import {useGSAP} from '@gsap/react'
 import Image from 'next/image'
 import { Link, useTransitionRouter } from 'next-view-transitions'
+import {PortableText} from 'next-sanity'
+import {usePathname} from 'next/navigation'
 import gsap from 'gsap'
-import type {SettingsQueryResult} from '@/sanity.types'
+import type {SettingsQueryResult, ContactColumnsQueryResult} from '@/sanity.types'
 import NavLinks from './NavLinks'
 import {LogoPaths} from '../constants/logo-paths'
 
-type Props = NonNullable<SettingsQueryResult>
+const mobileNavLinks = [
+  {href: '/documentaries', label: 'documentaries'},
+  {href: '/campaigns', label: 'campaigns'},
+  {href: '/animations', label: 'animations'},
+  {href: '/about', label: 'about'},
+  {href: '/contact', label: 'contact'},
+]
 
-export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
+type Props = NonNullable<SettingsQueryResult> & {
+  contactBlock: NonNullable<ContactColumnsQueryResult>['contactBlock'] | null
+  menuVideoUrl: string | null
+}
+
+export const HomeHero = ({logo, backgroundVideo, welcomeText, contactBlock, menuVideoUrl}: Props) => {
   const router = useTransitionRouter()
+  const pathname = usePathname()
+  const [menuOpen, setMenuOpen] = useState(false)
   const topRef = useRef<SVGGElement>(null)
   const bottomRef = useRef<SVGGElement>(null)
   const logoMaskRef = useRef<SVGGElement>(null)
@@ -70,7 +85,7 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
         />
       )}
       <svg
-        className="absolute inset-0 w-full h-full overflow-visible pointer-events-none"
+        className="absolute inset-0 z-40 w-full h-full overflow-visible pointer-events-none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
@@ -86,19 +101,19 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
           </mask>
         </defs>
 
-        {/* Top half rect — clips to top 50%, slides up via ref on <g> */}
+        {/* Top half rect — oversized by 2px on all edges to prevent sub-pixel gaps */}
         <g ref={topRef}>
           <rect
-            x="0" y="0" width="100%" height="50%"
+            x="-2" y="-2" width="calc(100% + 4px)" height="calc(50% + 4px)"
             fill="#FCC554"
             mask="url(#wtysl-logo-mask)"
           />
         </g>
 
-        {/* Bottom half rect — clips to bottom 50%, slides down via ref on <g> */}
+        {/* Bottom half rect — oversized by 2px on all edges to prevent sub-pixel gaps */}
         <g ref={bottomRef}>
           <rect
-            x="0" y="50%" width="100%" height="50%"
+            x="-2" y="calc(50% - 2px)" width="calc(100% + 4px)" height="calc(50% + 4px)"
             fill="#FCC554"
             mask="url(#wtysl-logo-mask)"
           />
@@ -107,9 +122,10 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
 
       <header
         ref={headerRef}
-        className="fixed z-50 inset-x-0 top-0 p-9 lg:block hidden opacity-0 invisible"
+        className="fixed z-50 inset-x-0 top-0 lg:p-9 px-5 py-5 opacity-0 invisible"
       >
-        <div className="grid grid-cols-3 items-start">
+        {/* Desktop layout */}
+        <div className="hidden lg:grid grid-cols-3 items-start">
           <div>
             {logoUrl && (
               <Link href="/documentaries">
@@ -122,11 +138,68 @@ export const HomeHero = ({logo, backgroundVideo, welcomeText}: Props) => {
           </div>
           <div />
         </div>
+        {/* Mobile layout */}
+        <div className="lg:hidden flex items-start justify-between">
+          <div>
+            {logoUrl && (
+              <Link href="/documentaries">
+                <Image src={logoUrl} alt="Logo" width={100} height={100} className="h-11 w-auto" />
+              </Link>
+            )}
+          </div>
+          <button
+            onClick={() => setMenuOpen((v) => !v)}
+            className="text-[14px] text-white tracking-wide"
+          >
+            {menuOpen ? 'Close [x]' : 'Menu'}
+          </button>
+        </div>
       </header>
+
+      {/* Mobile menu overlay */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-40 bg-black flex flex-col px-5 pt-40 lg:hidden overflow-y-auto">
+          {menuVideoUrl && (
+            <video
+              src={menuVideoUrl}
+              className="absolute inset-0 w-full h-full object-cover opacity-40"
+              autoPlay
+              muted
+              loop
+              playsInline
+            />
+          )}
+          <nav className="relative flex flex-col gap-4 mb-12">
+            {mobileNavLinks.map(({href, label}) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMenuOpen(false)}
+                className={`text-[22px] capitalize ${pathname.startsWith(href) ? 'text-white' : 'text-white/40'}`}
+              >
+                {label}
+              </Link>
+            ))}
+          </nav>
+          {contactBlock && (
+            <div className="relative flex flex-col gap-6 text-[14px] text-white/60 mt-auto pb-20">
+              {contactBlock.firstColumn && (
+                <PortableText value={contactBlock.firstColumn as Parameters<typeof PortableText>[0]['value']} />
+              )}
+              {contactBlock.secondColumn && (
+                <PortableText value={contactBlock.secondColumn as Parameters<typeof PortableText>[0]['value']} />
+              )}
+              {contactBlock.thirdColumn && (
+                <PortableText value={contactBlock.thirdColumn as Parameters<typeof PortableText>[0]['value']} />
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <p
         ref={welcomeRef}
-        className="absolute inset-0 flex md:text-5xl text-3xl items-center justify-start text-white px-9 pb-36 opacity-0 invisible leading-tighter"
+        className="absolute inset-0 flex md:text-5xl text-3xl items-center justify-start text-white md:px-9 px-5 pb-36 opacity-0 invisible leading-tighter"
       >
         {welcomeText}
       </p>
