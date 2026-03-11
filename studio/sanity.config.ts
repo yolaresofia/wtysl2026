@@ -60,6 +60,10 @@ export default defineConfig({
           enable: '/api/draft-mode/enable',
         },
       },
+      allowOrigins: [
+        'http://localhost:3000',
+        'https://wtysl2026-frontend.vercel.app',
+      ],
       resolve: {
         // The Main Document Resolver API provides a method of resolving a main document from a given route or route pattern. https://www.sanity.io/docs/visual-editing/presentation-resolver-api#57720a5678d9
         mainDocuments: defineDocuments([
