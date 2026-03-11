@@ -13,7 +13,6 @@ import {
   presentationTool,
   defineDocuments,
   defineLocations,
-  type DocumentLocation,
 } from 'sanity/presentation'
 import {assist} from '@sanity/assist'
 import {vercelDeployPlugin} from './src/plugins/vercelDeploy'
@@ -25,20 +24,20 @@ const dataset = process.env.SANITY_STUDIO_DATASET || 'production'
 // URL for preview functionality, defaults to localhost:3000 if not set
 const SANITY_STUDIO_PREVIEW_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
 
-// Define the home location for the presentation tool
-const homeLocation = {
-  title: 'Home',
-  href: '/',
-} satisfies DocumentLocation
-
-// resolveHref() is a convenience function that resolves the URL
-// path for different document types and used in the presentation tool.
+// resolveHref() maps document types to their frontend URLs
 function resolveHref(documentType?: string, slug?: string): string | undefined {
   switch (documentType) {
-    case 'project':
-      return slug ? `/${slug}` : undefined
+    case 'documentaries':
+      return slug ? `/documentaries/${slug}` : '/documentaries'
+    case 'campaign':
+      return slug ? `/campaigns/${slug}` : '/campaigns'
+    case 'animation':
+      return slug ? `/animations/${slug}` : '/animations'
+    case 'aboutPage':
+      return '/about'
+    case 'contact':
+      return '/contact'
     default:
-      console.warn('Invalid document type:', documentType)
       return undefined
   }
 }
@@ -65,35 +64,69 @@ export default defineConfig({
         'https://wtysl2026-frontend.vercel.app',
       ],
       resolve: {
-        // The Main Document Resolver API provides a method of resolving a main document from a given route or route pattern. https://www.sanity.io/docs/visual-editing/presentation-resolver-api#57720a5678d9
         mainDocuments: defineDocuments([
           {
-            route: '/',
-            filter: `_type == "homepage" && _id == "homepage"`,
+            route: '/about',
+            filter: `_type == "aboutPage" && _id == "aboutPage"`,
           },
           {
-            route: '/:slug',
-            filter: `_type == "project" && slug.current == $slug || _id == $slug`,
+            route: '/contact',
+            filter: `_type == "contact" && _id == "contact"`,
+          },
+          {
+            route: '/documentaries/:slug',
+            filter: `_type == "documentaries" && slug.current == $slug`,
+          },
+          {
+            route: '/campaigns/:slug',
+            filter: `_type == "campaign" && slug.current == $slug`,
+          },
+          {
+            route: '/animations/:slug',
+            filter: `_type == "animation" && slug.current == $slug`,
           },
         ]),
-        // Locations Resolver API allows you to define where data is being used in your application. https://www.sanity.io/docs/visual-editing/presentation-resolver-api#8d8bca7bfcd7
         locations: {
-          homepage: defineLocations({
-            locations: [homeLocation],
-            message: 'This document is used on the homepage',
+          aboutPage: defineLocations({
+            locations: [{title: 'About', href: '/about'}],
+            message: 'This document is used on the About page',
             tone: 'positive',
           }),
-          project: defineLocations({
-            select: {
-              name: 'name',
-              slug: 'slug.current',
-            },
+          contact: defineLocations({
+            locations: [{title: 'Contact', href: '/contact'}],
+            message: 'This document is used on the Contact page',
+            tone: 'positive',
+          }),
+          documentaries: defineLocations({
+            select: {name: 'name', slug: 'slug.current'},
             resolve: (doc) => ({
               locations: [
-                {
-                  title: doc?.name || 'Untitled',
-                  href: resolveHref('project', doc?.slug)!,
-                },
+                ...(doc?.slug
+                  ? [{title: doc?.name || 'Untitled', href: resolveHref('documentaries', doc.slug)!}]
+                  : []),
+                {title: 'Documentaries', href: '/documentaries'},
+              ],
+            }),
+          }),
+          campaign: defineLocations({
+            select: {name: 'name', slug: 'slug.current'},
+            resolve: (doc) => ({
+              locations: [
+                ...(doc?.slug
+                  ? [{title: doc?.name || 'Untitled', href: resolveHref('campaign', doc.slug)!}]
+                  : []),
+                {title: 'Campaigns', href: '/campaigns'},
+              ],
+            }),
+          }),
+          animation: defineLocations({
+            select: {name: 'name', slug: 'slug.current'},
+            resolve: (doc) => ({
+              locations: [
+                ...(doc?.slug
+                  ? [{title: doc?.name || 'Untitled', href: resolveHref('animation', doc.slug)!}]
+                  : []),
+                {title: 'Animations', href: '/animations'},
               ],
             }),
           }),

@@ -6,9 +6,10 @@ type Props = {
   url: string
   title?: string
   autoplay?: boolean
+  onEnded?: () => void
 }
 
-export default function VimeoPlayer({url, title, autoplay}: Props) {
+export default function VimeoPlayer({url, title, autoplay, onEnded}: Props) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
@@ -17,6 +18,8 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const playerRef = useRef<Player | null>(null)
+  const onEndedRef = useRef(onEnded)
+  onEndedRef.current = onEnded
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href)
@@ -41,8 +44,10 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
 
   const toggleMute = () => {
     if (!playerRef.current) return
-    playerRef.current.setMuted(!isMuted)
-    setIsMuted(!isMuted)
+    const newMuted = !isMuted
+    playerRef.current.setMuted(newMuted).catch(() => {})
+    if (!newMuted) playerRef.current.setVolume(1).catch(() => {})
+    setIsMuted(newMuted)
   }
 
   const handleFullscreen = () => {
@@ -61,22 +66,35 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
     if (existing) existing.remove()
 
     let destroyed = false
+    const isFullUrl = url.startsWith('http')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const player = new Player(containerRef.current, {
-      id: url,
+      ...(isFullUrl ? {url} : {id: Number(url)}),
       controls: false,
       title: false,
       byline: false,
       portrait: false,
       autoplay: autoplay ?? false,
       muted: false,
-    })
+    } as any)
     playerRef.current = player
 
     player.ready().then(() => {
       if (destroyed) return
+      // Force unmuted with full volume — SDK options alone aren't reliable
+      player.setVolume(1).catch(() => {})
+      player.setMuted(false).catch(() => {})
       player.on('play', () => { if (!destroyed) setIsPlaying(true) })
       player.on('pause', () => { if (!destroyed) setIsPlaying(false) })
-      player.on('timeupdate', (data) => { if (!destroyed) setCurrentTime(data.seconds) })
+      player.on('timeupdate', (data) => {
+        if (destroyed) return
+        setCurrentTime(data.seconds)
+        // Fallback: close ~0.5s before end to prevent Vimeo end screen
+        if (data.duration > 0 && data.seconds >= data.duration - 0.5) {
+          onEndedRef.current?.()
+        }
+      })
+      player.on('ended', () => { if (!destroyed) onEndedRef.current?.() })
       player.getDuration().then((d) => { if (!destroyed) setDuration(d) }).catch(() => {})
     }).catch(() => {})
 
@@ -86,6 +104,7 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
       player.off('play')
       player.off('pause')
       player.off('timeupdate')
+      player.off('ended')
       player.destroy().catch(() => {})
     }
   }, [url, autoplay])
@@ -121,8 +140,9 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect()
             const ratio = (e.clientX - rect.left) / rect.width
-            playerRef.current?.setCurrentTime(ratio * duration)
-            setCurrentTime(ratio * duration)
+            const seekTo = ratio * duration
+            setCurrentTime(seekTo)
+            playerRef.current?.setCurrentTime(seekTo).catch(() => {})
           }}
         >
           <div className="absolute inset-x-0 h-px bg-white/30" />
@@ -171,8 +191,9 @@ export default function VimeoPlayer({url, title, autoplay}: Props) {
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect()
             const ratio = (e.clientX - rect.left) / rect.width
-            playerRef.current?.setCurrentTime(ratio * duration)
-            setCurrentTime(ratio * duration)
+            const seekTo = ratio * duration
+            setCurrentTime(seekTo)
+            playerRef.current?.setCurrentTime(seekTo).catch(() => {})
           }}
         >
           <div className="absolute inset-x-0 h-px bg-white/30" />

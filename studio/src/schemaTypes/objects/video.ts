@@ -14,18 +14,18 @@ export const video = defineType({
     }),
     defineField({
       name: 'vimeoUrl',
-      title: 'Vimeo URL',
+      title: 'Vimeo URL id',
       type: 'string',
     }),
   ],
   preview: {
     select: {
-      title: 'Vimeo URL',
+      title: 'Vimeo URL id',
     },
     prepare({title}) {
       return {
-        title: title || 'Vimeo URL',
-        subtitle: 'Vimeo URL',
+        title: title || 'Vimeo URL id',
+        subtitle: 'Vimeo URL id',
       }
     },
   },

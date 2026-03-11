@@ -52,14 +52,14 @@ export const galleryItem = defineType({
     }),
     defineField({
       name: 'vimeoUrl',
-      title: 'Vimeo URL',
+      title: 'Vimeo URL id',
       type: 'string',
       hidden: ({parent}) => parent?.type !== 'video',
       validation: (Rule) =>
         Rule.custom((value, context) => {
           const parent = context.parent as {type?: string}
           if (parent?.type === 'video' && !value) {
-            return 'Vimeo URL is required for video items'
+            return 'Vimeo URL id is required for video items'
           }
           return true
         }),
