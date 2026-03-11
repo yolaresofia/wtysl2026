@@ -16,6 +16,7 @@ import {
   type DocumentLocation,
 } from 'sanity/presentation'
 import {assist} from '@sanity/assist'
+import {vercelDeployPlugin} from './src/plugins/vercelDeploy'
 
 // Environment variables for project configuration
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'your-projectID'
@@ -101,7 +102,7 @@ export default defineConfig({
     // Additional plugins for enhanced functionality
     unsplashImageAsset(),
     assist(),
-    visionTool(),
+    vercelDeployPlugin(),
   ],
 
   // Schema configuration, imported from ./src/schemaTypes/index.ts
